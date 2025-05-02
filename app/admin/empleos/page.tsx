@@ -6,7 +6,6 @@ import { Button } from "@/app/components/ui/dashboard/Button";
 import { Input } from "@/app/components/ui/dashboard/Input";
 import { Select } from "@/app/components/ui/dashboard/Select";
 import { useForm } from "react-hook-form";
-import { collection, addDoc, query, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { supabase } from "@/app/lib/supabase";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
