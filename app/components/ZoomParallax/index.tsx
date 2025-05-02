@@ -10,7 +10,7 @@ import Picture6 from '../../../public/pexels-fauxels-3183186.jpg';
 import Picture7 from '../../../public/about-nav-image.jpg';
 
 import Image from 'next/image';
-import { useScroll, useTransform, motion } from 'motion/react';
+import { useScroll, useTransform, motion, useMotionValueEvent } from 'motion/react';
 import { useRef } from 'react';
 
 export default function Index() {
@@ -18,6 +18,7 @@ export default function Index() {
     const container = useRef(null);
     const { scrollYProgress } = useScroll({
         target: container,
+        layoutEffect: false,
         offset: ['start start', 'end end']
     })
 
