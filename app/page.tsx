@@ -1,3 +1,5 @@
+'use client'
+
 import Index from "./components/ZoomParallax";
 import Header from "@/app/components/NavBars/header"
 import About from "./components/About"
