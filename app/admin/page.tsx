@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import { motion, Transition, Variants } from "framer-motion";
+import { motion, Transition, Variants } from "motion/react";
 
 const loginSchema = z.object({
   email: z.string().email("Please provide a valid email"),

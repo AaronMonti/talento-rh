@@ -2,7 +2,7 @@
 import styles from './style.module.scss';
 import Link from 'next/link';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { opacity, background } from './anim';
 import Nav from './nav';
 import Image from 'next/image';

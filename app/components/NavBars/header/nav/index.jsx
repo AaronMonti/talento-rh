@@ -1,7 +1,7 @@
 'use client';
 import styles from './style.module.scss';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { height } from '../anim';
 import Body from './Body';
 import Footer from './Footer';

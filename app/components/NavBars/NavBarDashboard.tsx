@@ -9,7 +9,7 @@ import {
   LogOut,
   Building2
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/app/lib/supabase";
 import * as Dialog from '@radix-ui/react-dialog';
