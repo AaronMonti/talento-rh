@@ -116,7 +116,7 @@ export default function Postulaciones() {
               Ver empleo
             </Button>
             <Button
-              variant="destructive"
+              variant="outline"
               size="sm"
               onClick={handleDelete}
             >
