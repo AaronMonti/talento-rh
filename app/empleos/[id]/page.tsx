@@ -175,12 +175,11 @@ export default function JobDetail() {
             // 2. Obtener la URL pública del archivo (si el bucket es público)
             const {
                 data: publicUrlData,
-                error: publicUrlError
             } = supabase.storage
                 .from("cvs")
                 .getPublicUrl(filePath);
     
-            if (publicUrlError || !publicUrlData.publicUrl) {
+            if (!publicUrlData.publicUrl) {
                 throw new Error("No se pudo obtener la URL pública del CV");
             }
     
@@ -308,10 +307,10 @@ export default function JobDetail() {
                 </Button>
 
                 <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline">
                         <Share2 size={16} className="mr-1" /> Compartir
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline">
                         <Bookmark size={16} className="mr-1" /> Guardar
                     </Button>
                 </div>
@@ -372,8 +371,7 @@ export default function JobDetail() {
                     {!showApplicationForm ? (
                         <Button 
                             onClick={() => setShowApplicationForm(true)}
-                            color="primary" 
-                            size="lg" 
+                            variant="primary"
                             className="w-full sm:w-auto"
                         >
                             Aplicar a esta oferta
@@ -512,7 +510,6 @@ export default function JobDetail() {
                                 <div className="flex items-center space-x-3 pt-4">
                                     <Form.Submit asChild>
                                         <Button
-                                            disabled={submitLoading}
                                             className="w-full sm:w-auto"
                                         >
                                             {submitLoading ? (
@@ -527,10 +524,8 @@ export default function JobDetail() {
                                         </Button>
                                     </Form.Submit>
                                     <Button
-                                        type="button"
                                         variant="outline"
                                         onClick={() => setShowApplicationForm(false)}
-                                        disabled={submitLoading}
                                     >
                                         Cancelar
                                     </Button>
