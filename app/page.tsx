@@ -8,12 +8,12 @@ import Contact from "./components/Contact"
 
 export default function Home() {
   return (
-    <main>
+    <div>
       <Header />
       <Index />
       <About />
       <Clients />
       <Contact />
-    </main>
+    </div>
   )
 }

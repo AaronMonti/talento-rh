@@ -6,6 +6,7 @@ import { useToast } from "../components/ui/radix-toast";
 
 export function useCvUpload() {
     const [cvFile, setCvFile] = useState<File | null>(null);
+    const [filePath, setFilePath] = useState<any | string>('');
     const { showToast } = useToast();
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +38,7 @@ export function useCvUpload() {
     const handleUpload = async () => {
         if (!cvFile) return;
 
-        const filePath = `curriculums/${cvFile.name}`;
+        setFilePath(`curriculums/${cvFile.name}`);
 
         const fileName = cvFile.name;
         const { data: files, error: listError } = await supabase
@@ -89,6 +90,7 @@ export function useCvUpload() {
 
     return {
         cvFile,
+        filePath,
         handleFileChange,
         handleUpload,
     };
