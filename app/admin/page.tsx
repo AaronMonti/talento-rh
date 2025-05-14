@@ -8,10 +8,23 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { motion, Transition, Variants } from "motion/react";
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 
 const loginSchema = z.object({
-  email: z.string().email("Please provide a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().email("Por favor ingresa un email válido"),
+  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  // Add any other validation rules you need
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -38,13 +51,13 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
+  const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-  });
+    defaultValues: {
+      email: "",
+      password: "",
+    }
+  })
 
   useEffect(() => {
     const checkSession = async () => {
@@ -54,16 +67,17 @@ export default function AdminPage() {
     checkSession();
   }, [router]);
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (values: LoginFormData) => {
     setAuthError("");
 
     const { error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
+      email: values.email,
+      password: values.password,
     });
 
     if (error) {
-      setAuthError("Failed to login. Please check your credentials.");
+      setAuthError("Fallo al iniciar sesión. Por favor verifica tus credenciales.");
+      console.error("Error al iniciar sesión:", error.message);
     } else {
       router.push("/admin/dashboard");
     }
@@ -71,82 +85,96 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-tertiary/10 px-4">
-      <div className="w-full max-w-md bg-white p-8 border-2 border-primary shadow-[2px_2px_0px_#e44f9c]">
-        <h1 className="text-3xl font-extrabold uppercase text-center tracking-wide mb-6 text-primary">
+      <Card className="w-full max-w-md">
+        <CardTitle className="text-3xl font-extrabold uppercase text-center tracking-wide mb-6 text-primary">
           Panel de Administración
-        </h1>
+        </CardTitle>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Email */}
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-md font-bold uppercase tracking-wider text-primary">
-              Correo Electrónico
-            </label>
-            {errors.email && <span className="text-xs text-red-600">{errors.email.message}</span>}
-            <input
-              id="email"
-              type="email"
-              placeholder="correo@correo.com"
-              {...register("email")}
-              className="w-full px-4 py-2 border-2 border-primary shadow-[2px_2px_0px_#e44f9c] text-primary placeholder:text-gray-500 focus:outline-none focus:border-accent transition-colors"
-            />
-          </div>
+        <CardContent>
 
-          {/* Password */}
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-md font-bold uppercase tracking-wider text-primary">
-              Contraseña
-            </label>
-            {errors.password && <span className="text-xs text-red-600">{errors.password.message}</span>}
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="********"
-                {...register("password")}
-                className="w-full px-4 py-2 border-2 border-primary shadow-[2px_2px_0px_#e44f9c] text-primary placeholder:text-gray-500 focus:outline-none focus:border-accent transition-colors pr-12"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-highlight hover:text-accent transition-colors"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Correo Electrónico</FormLabel>
+                    <FormControl>
+                      <Input variant="brutalist" placeholder="shadcn" {...field} />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.email?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </div>
-          </div>
-
-          {authError && <p className="text-sm text-red-600">{authError}</p>}
-
-          {/* Botón */}
-          <motion.button
-            type="submit"
-            disabled={isSubmitting}
-            className="relative w-full px-6 py-2 font-medium bg-primary text-white transition-colors hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
-            whileTap={{ scale: 0.95 }}
-          >
-            {isSubmitting ? (
-              <motion.div
-                className="flex items-center justify-center gap-2 py-2"
-                variants={loadingContainerVariants}
-                initial="start"
-                animate="end"
+              </FormField>
+              {/* Password */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contraseña</FormLabel>
+                    <FormControl>
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        variant="brutalist"
+                        placeholder="********"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.password?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
               >
-                {[0, 1, 2].map((_, i) => (
-                  <motion.span
-                    key={i}
-                    className="w-2 h-2 bg-white rounded-full"
-                    variants={loadingCircleVariants}
-                    transition={loadingCircleTransition}
-                  />
-                ))}
-              </motion.div>
-            ) : (
-              "Iniciar Sesión"
-            )}
-          </motion.button>
-        </form>
-      </div>
+              </FormField>
+              <Button
+                type="submit"
+                className="w-full"
+                variant={"brutalist"}
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? (
+                  <motion.div
+                    variants={loadingContainerVariants}
+                    initial="start"
+                    animate="end"
+                  >
+                    <motion.div
+                      className="w-4 h-4 rounded-full bg-white"
+                      variants={loadingCircleVariants}
+                      transition={loadingCircleTransition}
+                    />
+                  </motion.div>
+                ) : (
+                  "Iniciar Sesión"
+                )}
+              </Button>
+              {authError && (
+                <p className="text-red-500 text-sm text-center mt-2">
+                  {authError}
+                </p>
+              )}
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter className="text-center">
+          <p className="text-sm text-muted-foreground">
+            ¿Olvidaste tu contraseña?{" "}
+            <a
+              href="#"
+              className="text-primary hover:underline"
+            >
+              Recuperar
+            </a>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

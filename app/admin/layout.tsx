@@ -44,7 +44,7 @@ export default function AdminLayout({
     <div className="min-h-screen bg-white">
       <div className="flex">
         {isAuthenticated && <Sidebar />}
-        <div className="flex-1 p-8">
+        <div className={`flex-1 ${isAuthenticated ? "p-4" : ""}`}>
           {children}
         </div>
       </div>
