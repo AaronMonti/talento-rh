@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/app/lib/supabase";
-import { Card } from "@/app/components/ui/dashboard/Card";
+/* import { Card } from "@/app/components/ui/dashboard/Card";
 import { Input } from "@/app/components/ui/dashboard/Input";
-import { Select } from "@/app/components/ui/dashboard/Select";
+import { Select } from "@/app/components/ui/dashboard/Select"; */
 import { FileText, Download } from "lucide-react";
-import { Button } from "@/app/components/ui/dashboard/Button";
+/* import { Button } from "@/app/components/ui/dashboard/Button"; */
 
 interface CV {
   id: string;
@@ -136,7 +136,7 @@ export default function CVs() {
 
   return (
     <div className="space-y-8">
-      <Card className="!p-4">
+      hola      {/* <Card className="!p-4">
         <h1 className="text-3xl font-bold text-primary">Banco de CVs</h1>
       </Card>
 
@@ -185,7 +185,7 @@ export default function CVs() {
             ))
           )}
         </div>
-      </Card>
+      </Card> */}
     </div>
   );
 }
