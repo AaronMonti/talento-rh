@@ -12,11 +12,12 @@ interface Params {
     };
 }
 
-export default async function TrabajoDetallePage({ params }: Params) {
+export default async function TrabajoDetallePage({ params }: { params: Promise<{ id: string }>}) {
+    const { id } = await params;
     const { data, error } = await supabase
         .from("trabajos")
         .select("*")
-        .eq("id", params.id)
+        .eq("id", id)
         .single();
 
     if (error || !data) return notFound();
