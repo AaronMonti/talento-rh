@@ -4,7 +4,6 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    padding: 2rem 0;
     overflow: hidden;
     /* background: linear-gradient(90deg, #f0f0f0 0%, rgba(255,255,255,0) 20%, rgba(255,255,255,0) 80%, #fff 100%); */
 }
@@ -30,11 +29,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    background-color: #8b8585;
+    padding: 0rem;
+    background-color: #d4d4d4;
     border-radius: 8px;
     transition: all 0.3s ease;
     min-width: 200px;
+    min-height: 200px;
 }
 
 .logoWrapper:hover {

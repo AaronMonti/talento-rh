@@ -69,7 +69,7 @@
             &:nth-of-type(2){
                 .imageContainer{
                     top: -29vh;
-                    left: -22vw;
+                    left: -22.5vw;
                 }
             }
             // Imagen superior
@@ -82,43 +82,43 @@
             // Imagen superior derecha
             &:nth-of-type(4){
                 .imageContainer{
-                    top: -28vh;
-                    left: 22vw;
+                    top: -29vh;
+                    left: 22.5vw;
                 }
             }
             // Imagen izquierda
             &:nth-of-type(5){
                 .imageContainer{
                     top: 0;
-                    left: -22vw;
+                    left: -22.5vw;
                 }
             }
             // Imagen derecha
             &:nth-of-type(6){
                 .imageContainer{
                     top: 0;
-                    left: 22vw;
+                    left: 22.5vw;
                 }
             }
             // Imagen inferior izquierda
             &:nth-of-type(7){
                 .imageContainer{
-                    top: 28vh;
-                    left: -22vw;
+                    top: 29vh;
+                    left: -22.5vw;
                 }
             }
             // Imagen inferior
             &:nth-of-type(8){
                 .imageContainer{
-                    top: 28vh;
+                    top: 29vh;
                     left: 0;
                 }
             }
             // Imagen inferior derecha
             &:nth-of-type(9){
                 .imageContainer{
-                    top: 28vh;
-                    left: 22vw;
+                    top: 29vh;
+                    left: 22.5vw;
                 }
             }
         }

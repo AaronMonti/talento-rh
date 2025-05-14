@@ -75,8 +75,8 @@ export default function Clients() {
                                     <Image
                                         src={client.logo}
                                         alt={client.name}
-                                        width={120}
-                                        height={60}
+                                        width={150}
+                                        height={75}
                                         className="object-contain"
                                     />
                                 </div>
@@ -92,8 +92,8 @@ export default function Clients() {
                                     <Image
                                         src={client.logo}
                                         alt={client.name}
-                                        width={120}
-                                        height={60}
+                                        width={150}
+                                        height={75}
                                         className="object-contain"
                                     />
                                 </div>

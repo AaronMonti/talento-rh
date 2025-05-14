@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building, MapPin, CircleDollarSign } from "lucide-react";
 import Link from "next/link";
+import Header from "@/app/components/NavBars/header"
 
 interface Trabajo {
   id: string;
@@ -59,51 +60,55 @@ export default async function TrabajosPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4">Ofertas de empleo en Argentina</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.map((trabajo: Trabajo) => (
-          <Link href={`/empleos/${trabajo.id}`} key={trabajo.id} className="group">
-            <Card className="h-full transition-shadow hover:shadow-md hover:border-primary">
-              <CardContent className="p-6 flex flex-col h-full">
-                <div className="flex justify-between mb-3">
-                  <Badge className={getModalidadColor(trabajo.modalidad)}>
-                    {trabajo.modalidad}
-                  </Badge>
-                </div>
-                <h2 className="text-xl font-semibold mb-1 group-hover:text-primary transition-colors">
-                  {trabajo.titulo_vacante}
-                </h2>
-                <div className="flex items-center text-sm text-gray-600 mb-2">
-                  <Building size={16} className="mr-1" />
-                  {trabajo.empresa}
-                </div>
-                <div className="space-y-1 mb-4 text-sm text-gray-500">
-                  {trabajo.ubicacion && (
-                    <div className="flex items-center">
-                      <MapPin size={16} className="mr-1" />
-                      {trabajo.ubicacion}
-                    </div>
-                  )}
-                  {trabajo.rango_salarial && (
-                    <div className="flex items-center">
-                      <CircleDollarSign size={16} className="mr-1" />
-                      {trabajo.rango_salarial}
-                    </div>
-                  )}
-                </div>
-                <div className="mt-auto pt-4 border-t border-gray-100">
-                  <span className="text-primary text-sm font-medium inline-flex items-center group-hover:underline">
-                    Ver detalles
-                    <svg className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+    <div>
+      <Header />
+      <div className="relative top-20 max-w-6xl mx-auto p-6">
+        <h1 className="text-center text-4xl font-bold text-gray-800 mb-6">Ofertas de empleo</h1>
+        <div className="w-24 h-1 bg-primary mx-auto mb-8"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {data.map((trabajo: Trabajo) => (
+            <Link href={`/empleos/${trabajo.id}`} key={trabajo.id} className="group">
+              <Card className="h-full transition-shadow hover:shadow-md hover:border-primary">
+                <CardContent className="p-6 flex flex-col h-full">
+                  <div className="flex justify-between mb-3">
+                    <Badge className={getModalidadColor(trabajo.modalidad)}>
+                      {trabajo.modalidad}
+                    </Badge>
+                  </div>
+                  <h2 className="text-xl font-semibold mb-1 group-hover:text-primary transition-colors">
+                    {trabajo.titulo_vacante}
+                  </h2>
+                  <div className="flex items-center text-sm text-gray-600 mb-2">
+                    <Building size={16} className="mr-1" />
+                    {trabajo.empresa}
+                  </div>
+                  <div className="space-y-1 mb-4 text-sm text-gray-500">
+                    {trabajo.ubicacion && (
+                      <div className="flex items-center">
+                        <MapPin size={16} className="mr-1" />
+                        {trabajo.ubicacion}
+                      </div>
+                    )}
+                    {trabajo.rango_salarial && (
+                      <div className="flex items-center">
+                        <CircleDollarSign size={16} className="mr-1" />
+                        {trabajo.rango_salarial}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-auto pt-4 border-t border-gray-100">
+                    <span className="text-primary text-sm font-medium inline-flex items-center group-hover:underline">
+                      Ver detalles
+                      <svg className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
