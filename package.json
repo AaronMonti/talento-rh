@@ -17,6 +17,7 @@
     "@tiptap/starter-kit": "^2.11.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.487.0",
     "motion": "^12.6.5",
     "next": "15.3.0",
