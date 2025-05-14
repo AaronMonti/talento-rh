@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Card } from "@/app/components/ui/dashboard/Card";
+/* import { Card } from "@/app/components/ui/dashboard/Card";
 import { Button } from "@/app/components/ui/dashboard/Button";
 import { Input } from "@/app/components/ui/dashboard/Input";
-import { Select } from "@/app/components/ui/dashboard/Select";
+import { Select } from "@/app/components/ui/dashboard/Select"; */
 import { useForm } from "react-hook-form";
 import { supabase } from "@/app/lib/supabase";
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -222,7 +222,8 @@ export default function Empleos() {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <Card className="!p-4">
+        hla
+        {/* <Card className="!p-4">
           <h1 className="text-3xl font-bold text-black">
             Gestión de Empleos
           </h1>
@@ -239,10 +240,10 @@ export default function Empleos() {
           }}
         >
           Crear Nuevo Empleo
-        </Button>
+        </Button> */}
 
         {/* Diálogo para crear/editar empleo con Radix Primitives */}
-        <Dialog
+        {/* <Dialog
           open={isDialogOpen}
           onOpenChange={(open) => {
             if (!open) handleDialogClose();
@@ -354,10 +355,10 @@ export default function Empleos() {
               </Button>
             </div>
           </form>
-        </Dialog>
+        </Dialog> */}
 
         {/* Diálogo de confirmación para eliminar con Radix Primitives */}
-        <Dialog
+        {/* <Dialog
           open={isDeleteDialogOpen}
           onOpenChange={setIsDeleteDialogOpen}
           title="Confirmar eliminación"
@@ -384,10 +385,10 @@ export default function Empleos() {
               </Button>
             </div>
           </div>
-        </Dialog>
+        </Dialog> */}
       </div>
 
-      <div className="grid gap-6">
+     {/*  <div className="grid gap-6">
         {empleos.length === 0 ? (
           <Card className="p-6 text-center text-gray-500">
             No hay empleos disponibles. ¡Crea el primero!
@@ -440,7 +441,7 @@ export default function Empleos() {
             </Card>
           ))
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

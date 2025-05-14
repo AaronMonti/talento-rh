@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@/app/components/ui/dashboard/Card";
+/* import { Card } from "@/app/components/ui/dashboard/Card"; */
 import { 
   Users, 
   FileText, 
@@ -42,7 +42,8 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <Card className="!p-4">
+      Panel de Control
+      {/* <Card className="!p-4">
         <h1 className="text-3xl font-bold text-primary">
           Panel de Control
         </h1>
@@ -65,7 +66,7 @@ export default function Dashboard() {
             </div>
           </Card>
         ))}
-      </div>
+      </div> */}
 
       {/* Aquí puedes agregar más secciones como gráficos o tablas */}
     </div>

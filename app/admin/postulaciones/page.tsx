@@ -1,9 +1,9 @@
 'use client';
 
-import { Card } from "@/app/components/ui/dashboard/Card";
+/* import { Card } from "@/app/components/ui/dashboard/Card";
 import { Input } from "@/app/components/ui/dashboard/Input";
 import { Select } from "@/app/components/ui/dashboard/Select";
-import { Button } from "@/app/components/ui/dashboard/Button";
+import { Button } from "@/app/components/ui/dashboard/Button"; */
 import { Eye } from 'lucide-react';
 import {
   useReactTable,
@@ -62,97 +62,10 @@ export default function Postulaciones() {
     fetchCVs();
   }, []);
 
-  // Columnas memoizadas
-  const columns = useMemo<ColumnDef<Application>[]>(() => [
-    {
-      accessorKey: 'nombre',
-      header: "Candidato",
-      cell: ({ row }) => (
-        <div>
-          <div className="font-medium">{row.original.nombre} {row.original.apellidos}</div>
-          <div className="text-sm text-gray-500">{row.original.email}</div>
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'empleo_titulo',
-      header: "Posición",
-    },
-    {
-      accessorKey: 'fecha_postulacion',
-      header: "Fecha",
-      cell: ({ row }) =>
-        format(new Date(row.getValue('fecha_postulacion')), "d 'de' MMMM, yyyy", { locale: es }),
-    },
-    {
-      id: 'actions',
-      header: () => <div className="text-right font-bold">Acciones</div>,
-      cell: ({ row }) => {
-        const app = row.original;
-    
-        const handleDelete = async () => {
-          if (confirm(`¿Estás seguro de eliminar la postulación de ${app.nombre}?`)) {
-            const { error } = await supabase
-              .from('postulaciones')
-              .delete()
-              .eq('id', app.id);
-    
-            if (error) {
-              console.error('❌ Error al eliminar:', error.message);
-            } else {
-              setApplications(prev => prev.filter(a => a.id !== app.id));
-            }
-          }
-        };
-    
-        return (
-          <div className="text-right flex gap-2 justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.location.href = `/empleos/${app.empleo_id}`}
-            >
-              <Eye className="h-4 w-4 mr-1" />
-              Ver empleo
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDelete}
-            >
-              Eliminar
-            </Button>
-          </div>
-        );
-      }
-    }
-  ], []);
-
   // Configuración de la tabla memoizada
-  const table = useReactTable({
-    data: applications,
-    columns,
-    state: {
-      sorting,
-      globalFilter,
-      columnFilters,
-    },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
-  });
 
   // Manejadores de eventos memoizados
-  const handleGlobalFilterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+/*   const handleGlobalFilterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setGlobalFilter(e.target.value);
   }, []);
 
@@ -177,12 +90,13 @@ export default function Postulaciones() {
         Cargando postulaciones...
       </div>
     );
-  }
+  } */
   
 
   return (
     <div className="space-y-8">
-      <Card className="!p-4">
+      hola
+      {/* <Card className="!p-4">
         <h1 className="text-3xl font-bold text-primary">
           Postulaciones
         </h1>
@@ -295,7 +209,7 @@ export default function Postulaciones() {
             />
           </div>
         </div>
-      </Card>
+      </Card> */}
     </div>
   );
 } 
