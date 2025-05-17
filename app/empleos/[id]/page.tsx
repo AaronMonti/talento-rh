@@ -1,19 +1,28 @@
 import { supabase } from "@/app/lib/supabase";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Building, MapPin, Euro, GraduationCap, Clock } from "lucide-react";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+    Building,
+    MapPin,
+    Euro,
+    GraduationCap,
+    Clock,
+    ArrowLeft,
+} from "lucide-react";
+import PostulacionForm from "@/app/components/PostulationForm";
+import { Button } from "@/components/ui/button";
 
-interface Params {
-    params: {
-        id: string;
-    };
-}
-
-export default async function TrabajoDetallePage({ params }: { params: Promise<{ id: string }>}) {
+export default async function TrabajoDetallePage({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}) {
     const { id } = await params;
+
     const { data, error } = await supabase
         .from("trabajos")
         .select("*")
@@ -23,30 +32,45 @@ export default async function TrabajoDetallePage({ params }: { params: Promise<{
     if (error || !data) return notFound();
 
     const trabajo = data;
-
-    const formatoFecha = format(new Date(trabajo.fecha_publicacion), "d 'de' MMMM yyyy", {
-        locale: es,
-    });
+    const formatoFecha = format(
+        new Date(trabajo.fecha_publicacion),
+        "d 'de' MMMM yyyy",
+        {
+            locale: es,
+        }
+    );
 
     return (
-        <div className="max-w-3xl mx-auto p-6">
+        <div className="max-w-3xl mx-auto p-6 space-y-6">
+            <Button asChild variant="link">
+                <Link
+                    href="/empleos"
+                >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Volver al listado de empleos
+                </Link>
+            </Button>
+
             <Card>
-                <CardContent className="p-6 space-y-4">
-                    <div className="flex justify-between items-start">
+                <CardContent className="p-6 space-y-6">
+                    <header className="flex justify-between items-start">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">{trabajo.titulo_vacante}</h1>
-                            <div className="flex items-center text-sm text-gray-600 mt-1">
+                            <h1 className="text-2xl font-bold text-gray-900">
+                                {trabajo.titulo_vacante}
+                            </h1>
+                            <div className="flex items-center text-gray-600 mt-1">
                                 <Building size={16} className="mr-1" />
                                 {trabajo.empresa}
                             </div>
-                            <div className="text-sm text-gray-500 mt-1">
+                            <div className="text-gray-500 mt-1">
                                 Publicado el {formatoFecha}
                             </div>
                         </div>
                         <Badge variant="outline">{trabajo.modalidad}</Badge>
-                    </div>
+                    </header>
 
-                    <div className="space-y-2 text-sm text-gray-700">
+                    <section className="space-y-2 text-gray-700">
+                        <h2 className="font-semibold text-gray-800">Información general</h2>
                         {trabajo.ubicacion && (
                             <div className="flex items-center">
                                 <MapPin size={16} className="mr-2" />
@@ -72,21 +96,32 @@ export default async function TrabajoDetallePage({ params }: { params: Promise<{
                             </div>
                         )}
                         {trabajo.rubro && (
-                            <div className="text-gray-600">
+                            <div>
                                 <strong>Rubro:</strong> {trabajo.rubro}
                             </div>
                         )}
-                    </div>
+                    </section>
 
                     {trabajo.conocimientos_tecnicos && (
-                        <div className="text-gray-700 text-sm">
-                            <strong>Conocimientos técnicos:</strong> {trabajo.conocimientos_tecnicos}
-                        </div>
+                        <section className="text-gray-700">
+                            <h2 className="font-semibold text-gray-800 mb-1">
+                                Conocimientos técnicos
+                            </h2>
+                            <p>{trabajo.conocimientos_tecnicos}</p>
+                        </section>
                     )}
 
-                    <div className="text-gray-800 leading-relaxed text-sm">
-                        {trabajo.descripcion}
-                    </div>
+                    <section className="text-gray-800">
+                        <h2 className="font-semibold text-gray-800 mb-1">Descripción</h2>
+                        <p className="leading-relaxed whitespace-pre-line">
+                            {trabajo.descripcion}
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="font-semibold text-gray-800 mb-2">Postularse</h2>
+                        <PostulacionForm trabajoId={trabajo.id} />
+                    </section>
                 </CardContent>
             </Card>
         </div>
