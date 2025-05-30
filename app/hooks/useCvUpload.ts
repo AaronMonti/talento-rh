@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/app/lib/supabase";
-import { useToast } from "../components/ui/radix-toast";
+import { toast } from "sonner";
 
 export function useCvUpload() {
     const [cvFile, setCvFile] = useState<File | null>(null);
@@ -14,7 +14,7 @@ export function useCvUpload() {
         if (!file) return;
 
         if (file.type !== "application/pdf") {
-            showToast({
+            toast({
                 title: "Error",
                 description: "Por favor sube un archivo PDF",
                 variant: "destructive",
