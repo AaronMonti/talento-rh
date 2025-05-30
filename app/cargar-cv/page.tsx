@@ -82,11 +82,16 @@ export default function CvUploadPage() {
 
             toast.success("CV enviado correctamente")
             router.push("/cv/success")
-        } catch (err: any) {
-            console.error(err)
-            toast.error("Error al enviar el CV")
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error(err);
+                toast.error("Error al enviar el CV: " + err.message);
+            } else {
+                console.error("Error desconocido", err);
+                toast.error("Error desconocido al enviar el CV");
+            }
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
 

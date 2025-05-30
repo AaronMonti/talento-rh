@@ -14,7 +14,6 @@ import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/app/lib/supabase";
 
 const formSchema = z.object({
     titulo_vacante: z.string(),
@@ -65,24 +64,8 @@ export function TrabajoForm({
             activo: true,
         },
     });
-
-    // Formatear números igual que antes
-    function formatNumber(numStr: string) {
-        const num = Number(numStr.replace(/\D/g, ""));
-        if (isNaN(num)) return numStr;
-        return num.toLocaleString("es-AR");
-    }
-
+    
     async function handleSubmit(data: FormValues) {
-        // Construir string rango salarial
-        const { desde, hasta, moneda } = data.rango_salarial;
-        let rango = "";
-        if (desde && hasta) {
-            rango = `$${formatNumber(desde)} - $${formatNumber(hasta)} ${moneda}`;
-        } else if (desde) {
-            rango = `$${formatNumber(desde)} ${moneda}`;
-        }
-
         await onSubmit({ ...data, rango_salarial: { ...data.rango_salarial } });
     }
 

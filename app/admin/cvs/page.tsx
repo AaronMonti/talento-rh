@@ -91,8 +91,6 @@ export default function Candidatos() {
       {candidatos.length === 0 && <p>No hay candidatos registrados.</p>}
 
       {candidatos.map((c) => {
-        const nombreCV =
-          c.cv_storage_path?.split("-").slice(2).join("-") || "Archivo";
 
         return (
           <Card key={c.id}>

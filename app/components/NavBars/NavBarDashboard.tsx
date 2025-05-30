@@ -44,14 +44,7 @@ const menuItems = [
 
 export const Sidebar = () => {
   const [open, setOpen] = useState(true);
-  const router = useRouter();
   const pathname = usePathname(); // Reemplazar el window.location
-
-  // Encontrar el título del ítem basado en la ruta actual
-  const getCurrentTitle = () => {
-    const currentItem = menuItems.find(item => pathname === item.path);
-    return currentItem ? currentItem.title : "Dashboard";
-  };
 
   const handleLogout = async () => {
     try {
@@ -153,7 +146,7 @@ const Option = ({
   open,
   path,
 }: {
-  Icon: React.ComponentType<any>;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   title: string;
   description: string;
   selected: boolean;
