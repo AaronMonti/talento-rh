@@ -4,22 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Building, MapPin, CircleDollarSign } from "lucide-react";
 import Link from "next/link";
 import CVUploadDialog from "../components/CVUploadDialog";
-
-interface Trabajo {
-    id: string;
-    titulo_vacante: string;
-    empresa: string;
-    rubro: string | null;
-    formacion: string | null;
-    conocimientos_tecnicos: string | null;
-    jornada_laboral: string | null;
-    ubicacion: string | null;
-    modalidad: "Presencial" | "Remoto" | "Híbrido";
-    rango_salarial: string | null;
-    descripcion: string;
-    fecha_publicacion: string;
-    activo: boolean;
-}
+import { Trabajo } from "@/types";
 
 export default async function TrabajosPage() {
     const { data, error } = await supabase

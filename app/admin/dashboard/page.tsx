@@ -19,16 +19,16 @@ function formatPercentageChange(porcentaje: number | null): { change: string; ch
     }
 }
 
-type ContarMesResult = {
+/* type ContarMesResult = {
     mes_actual: number
     mes_anterior: number
     variacion_porcentual: number | null
-}
+} */
 
 export default async function Dashboard() {
-    const { data: postulacionesData, error: postulacionesError } = await supabase.rpc<ContarMesResult>('contar_postulaciones_mes')
+    const { data: postulacionesData, error: postulacionesError } = await supabase.rpc('contar_postulaciones_mes')
 
-    const { data: candidatosData, error: candidatosError } = await supabase.rpc<ContarMesResult>('contar_candidatos_mes')
+    const { data: candidatosData, error: candidatosError } = await supabase.rpc('contar_candidatos_mes')
 
 
     if (postulacionesError) {

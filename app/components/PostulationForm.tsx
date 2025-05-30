@@ -28,23 +28,18 @@ export default function PostulacionForm({ trabajoId }: Props) {
         setIsSubmitting(true);
         try {
             const filePath = `cv-${Date.now()}-${file.name}`;
-            const { error } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
                 .from("cvs")
                 .upload(filePath, file);
 
-            if (error) throw error;
-
-            const { data: publicUrl } = supabase.storage
-                .from("cvs")
-                .getPublicUrl(filePath);
+            if (uploadError) throw uploadError;
 
             const { error: postError } = await supabase
                 .from("postulaciones")
                 .insert([
                     {
                         trabajo_id: trabajoId,
-                        cv_url: publicUrl.publicUrl,
-                        cv_storage_path: filePath,
+                        cv_storage_path: filePath, // ✅ solo guardamos la ruta
                     },
                 ]);
 
@@ -59,6 +54,7 @@ export default function PostulacionForm({ trabajoId }: Props) {
             setIsSubmitting(false);
         }
     };
+
 
     return (
         <div className="space-y-6">

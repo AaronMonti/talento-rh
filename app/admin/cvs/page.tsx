@@ -1,191 +1,166 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/app/lib/supabase";
-/* import { Card } from "@/app/components/ui/dashboard/Card";
-import { Input } from "@/app/components/ui/dashboard/Input";
-import { Select } from "@/app/components/ui/dashboard/Select"; */
-import { FileText, Download } from "lucide-react";
-/* import { Button } from "@/app/components/ui/dashboard/Button"; */
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Trash2, Download, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
-interface CV {
-  id: string;
-  nombre: string;
-  email: string;
-  empleo_titulo: string;
-  fecha_postulacion: string;
-  cv_url: string;
-  signedUrl?: string;
+async function getSignedUrl(path: string): Promise<string | null> {
+  const { data } = await supabase.storage
+    .from("cvs")
+    .createSignedUrl(path, 60 * 60);
+  return data?.signedUrl || null;
 }
 
-export default function CVs() {
-  const [cvs, setCvs] = useState<CV[]>([]);
+export default function Candidatos() {
+  const [candidatos, setCandidatos] = useState<
+    Array<{
+      id: number;
+      nombre_apellido: string;
+      estudios: string;
+      localidad: string;
+      puesto_posicion: string;
+      cv_url: string | null;
+      cv_storage_path: string;
+      fecha_registro: string;
+    }>
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCVs = async () => {
-      setLoading(true);
-
-      // 1. Obtener CVs desde la tabla "postulaciones"
+    async function fetchCandidatos() {
       const { data, error } = await supabase
-        .from("postulaciones")
-        .select("id, nombre, email, empleo_titulo, fecha_postulacion, cv_url, empleo_id");
-
-      let signedCvs: CV[] = [];
+        .from("candidatos") // Asumo que la tabla se llama así
+        .select("*")
+        .order("fecha_registro", { ascending: false });
 
       if (error) {
-        console.error("❌ Error al cargar los CVs:", error.message);
-      } else if (data && data.length > 0) {
-        signedCvs = await Promise.all(
-          data.map(async (cv) => {
-            let path = "";
-
-            if (cv.empleo_id) {
-              path = `${cv.empleo_id}/${cv.cv_url.split("/").pop()}`;
-            } else {
-              path = `cvs/${cv.cv_url.split("/").pop()}`;
-            }
-
-            const { data: signed, error: signedErr } = await supabase
-              .storage
-              .from("cvs")
-              .createSignedUrl(path, 3600);
-
-            if (signedErr) {
-              console.error("❌ Error generando signed URL:", signedErr.message);
-            }
-
-            return {
-              ...cv,
-              signedUrl: signed?.signedUrl || cv.cv_url,
-            };
-          })
-        );
+        toast.error("Error cargando candidatos: " + error.message);
+        setLoading(false);
+        return;
       }
 
-      // 2. Obtener archivos desde la carpeta "curriculums"
-      const { data: curriculumFiles, error: curriculumError } = await supabase
-        .storage
-        .from("cvs")
-        .list("curriculums", { limit: 100 });
+      const candidatosConUrl = await Promise.all(
+        (data || []).map(async (c) => {
+          const url = c.cv_url || await getSignedUrl(c.cv_storage_path);
+          return { ...c, cv_url: url };
+        })
+      );
 
-      let curriculumCVs: CV[] = [];
-
-      if (curriculumError) {
-        console.error("❌ Error al listar archivos en 'curriculums':", curriculumError.message);
-      } else {
-        curriculumCVs = await Promise.all(
-          (curriculumFiles || [])
-          .filter((file) => file.name !== ".emptyFolderPlaceholder")
-          .map(async (file) => {
-            const path = `curriculums/${file.name}`;
-            const { data: signed, error: signedErr } = await supabase
-              .storage
-              .from("cvs")
-              .createSignedUrl(path, 3600);
-
-            if (signedErr) {
-              console.error(`❌ Error creando signed URL para ${file.name}:`, signedErr.message);
-            }
-
-            return {
-              id: `curriculum-${file.name}`,
-              nombre: file.name.replace(".pdf", ""),
-              email: "",
-              empleo_titulo: "",
-              fecha_postulacion: file.updated_at || new Date().toISOString(),
-              cv_url: path,
-              signedUrl: signed?.signedUrl || "",
-            };
-          })
-        );
-      }
-
-      // 3. Combinar ambos
-      setCvs([...signedCvs, ...curriculumCVs]);
+      setCandidatos(candidatosConUrl);
       setLoading(false);
-    };
+    }
 
-    fetchCVs();
+    fetchCandidatos();
   }, []);
 
-  const handleDownload = async (cv: CV) => {
-    if (!cv.signedUrl) {
-      console.error("❌ No se encontró la URL firmada para el CV");
-      return;
+  async function handleDelete(id: number) {
+    const { error } = await supabase.from("candidatos").delete().eq("id", id);
+    if (error) {
+      toast.error("Error al borrar candidato: " + error.message);
+    } else {
+      toast.success("Candidato borrado correctamente");
+      setCandidatos((prev) => prev.filter((c) => c.id !== id));
     }
+  }
 
-    try {
-      const response = await fetch(cv.signedUrl);
-      if (!response.ok) {
-        throw new Error("No se pudo obtener el archivo");
-      }
-
-      const blob = await response.blob();
-
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = `${cv.nombre}_CV.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("❌ Error descargando el archivo:", error);
-    }
-  };
+  if (loading) return <p>Cargando candidatos...</p>;
 
   return (
-    <div className="space-y-8">
-      hola      {/* <Card className="!p-4">
-        <h1 className="text-3xl font-bold text-primary">Banco de CVs</h1>
-      </Card>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">CVs Recibidos</h1>
 
-      <Card className="!p-6">
-        <div className="flex gap-4 mb-6">
-          <Input
-            placeholder="Buscar por nombre o posición..."
-            className="flex-1"
-          />
-          <Select
-            options={[{ label: "Todos", value: "all" }]}
-            placeholder="Filtrar por estado"
-          />
-        </div>
+      {candidatos.length === 0 && <p>No hay candidatos registrados.</p>}
 
-        <div className="space-y-4">
-          {loading ? (
-            <p>Cargando CVs...</p>
-          ) : cvs.length === 0 ? (
-            <p>No hay postulaciones aún.</p>
-          ) : (
-            cvs.map((cv) => (
-              <Card key={cv.id} className="!p-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <FileText className="h-8 w-8 text-secondary" />
-                  <div>
-                    <h3 className="font-bold text-primary">{cv.nombre}</h3>
-                    {cv.empleo_titulo ? (
-                      <>
-                        <p className="text-sm text-gray-600">{cv.empleo_titulo}</p>
-                        <p className="text-xs text-tertiary">
-                          Recibido: {new Date(cv.fecha_postulacion).toLocaleDateString()}
-                        </p>
-                      </>
-                    ) : (
-                      <p className="text-sm text-gray-500 italic">Archivo sin postulación</p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" className="!p-2" onClick={() => handleDownload(cv)}>
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </div>
-              </Card>
-            ))
-          )}
-        </div>
-      </Card> */}
+      {candidatos.map((c) => {
+        const nombreCV =
+          c.cv_storage_path?.split("-").slice(2).join("-") || "Archivo";
+
+        return (
+          <Card key={c.id}>
+            <CardHeader>
+              <CardTitle>{c.nombre_apellido}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p><strong>Estudios:</strong> {c.estudios}</p>
+              <p><strong>Localidad:</strong> {c.localidad}</p>
+              <p><strong>Puesto/Posición:</strong> {c.puesto_posicion}</p>
+              <p><strong>Fecha de registro:</strong> {c.fecha_registro}</p>
+
+              <div className="flex gap-4 mt-4">
+                {c.cv_url && (
+                  <>
+                    <Button variant="outline" asChild>
+                      <a
+                        href={c.cv_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-1" /> Ver CV
+                      </a>
+                    </Button>
+
+                    <Button
+                      variant="secondary"
+                      onClick={() => window.open(c.cv_url!, "_blank")}
+                      className="flex items-center"
+                    >
+                      <Download className="w-4 h-4 mr-1" /> Descargar
+                    </Button>
+                  </>
+                )}
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="flex items-center">
+                      <Trash2 className="w-4 h-4 mr-1" /> Borrar
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        ¿Estás seguro que deseas borrar este candidato?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta acción no se puede deshacer. El CV y los datos del
+                        candidato se eliminarán permanentemente.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDelete(c.id)}
+                        className="bg-destructive text-white hover:bg-destructive/90"
+                      >
+                        Borrar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

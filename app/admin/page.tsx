@@ -22,7 +22,7 @@ import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 
 const loginSchema = z.object({
     email: z.string().email("Por favor ingresa un email válido"),
-    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+    password: z.string().min(2, "La contraseña debe tener al menos 6 caracteres"),
     // Add any other validation rules you need
 });
 

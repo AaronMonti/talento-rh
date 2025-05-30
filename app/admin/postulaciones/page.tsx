@@ -1,204 +1,227 @@
-'use client';
+"use client";
 
-/* import { Card } from "@/app/components/ui/dashboard/Card";
-import { Input } from "@/app/components/ui/dashboard/Input";
-import { Select } from "@/app/components/ui/dashboard/Select";
-import { Button } from "@/app/components/ui/dashboard/Button"; */
-import { Eye } from 'lucide-react';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { supabase } from "@/app/lib/supabase";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Trash2, Download, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogCancel,
+    AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
-// Definimos los tipos
-interface Application {
-  id: string;
-  nombre: string;
-  apellidos: string;
-  email: string;
-  empleo_titulo: string;
-  empleo_id: string; // ← nuevo campo necesario
-  fecha_postulacion: string;
+async function getSignedUrl(path: string): Promise<string | null> {
+    const { data, error } = await supabase.storage
+        .from("cvs")
+        .createSignedUrl(path, 60);
+    if (error) {
+        console.error("Error obteniendo URL firmada:", error);
+        return null;
+    }
+    return data?.signedUrl || null;
 }
 
-
 export default function Postulaciones() {
-  // Estados para la tabla
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
+    const [postulaciones, setPostulaciones] = useState<
+        Array<{
+            id: number;
+            cv_storage_path: string;
+            fecha_postulacion: string;
+            trabajos: { titulo_vacante: string; fecha_publicacion: string };
+            cv_url?: string | null;
+        }>
+    >([]);
+    const [loading, setLoading] = useState(true);
 
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    const fetchCVs = async () => {
-      setLoading(true);
-  
-      const { data, error } = await supabase
-      .from("postulaciones")
-      .select("id, nombre, apellidos, email, empleo_titulo, empleo_id, fecha_postulacion");
-  
-      if (error) {
-        console.error("❌ Error al cargar los CVs:", error.message);
-      } else {
-        setApplications(data as Application[]);
-      }
-  
-      setLoading(false);
-    };
-  
-    fetchCVs();
-  }, []);
+    useEffect(() => {
+        async function fetchPostulaciones() {
+            const { data, error } = await supabase
+                .from("postulaciones")
+                .select(`
+          id,
+          cv_storage_path,
+          fecha_postulacion,
+          trabajos (
+            titulo_vacante,
+            fecha_publicacion
+          )
+        `)
+                .order("fecha_postulacion", { ascending: false });
 
-  // Configuración de la tabla memoizada
+            if (error) {
+                toast.error("Error cargando postulaciones: " + error.message);
+                setLoading(false);
+                return;
+            }
 
-  // Manejadores de eventos memoizados
-/*   const handleGlobalFilterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setGlobalFilter(e.target.value);
-  }, []);
+            const postulacionesConUrl = await Promise.all(
+                (data || []).map(async (p) => {
+                    const url = await getSignedUrl(p.cv_storage_path);
 
-  const handleStatusFilterChange = useCallback((value: string) => {
-    if (value === 'all') {
-      setColumnFilters(prev => prev.filter(f => f.id !== 'status'));
-    } else {
-      setColumnFilters(prev => [
-        ...prev.filter(f => f.id !== 'status'),
-        { id: 'status', value }
-      ]);
+                    // Aseguramos que los tipos sean correctos
+                    return {
+                        id: Number(p.id),
+                        cv_storage_path: String(p.cv_storage_path),
+                        fecha_postulacion: String(p.fecha_postulacion),
+                        trabajos: {
+                            titulo_vacante: String(p.trabajos?.[0]?.titulo_vacante || ""),
+                            fecha_publicacion: String(p.trabajos?.[0]?.fecha_publicacion || "")
+                        },
+                        cv_url: url,
+                    };
+                })
+            );
+            setPostulaciones(postulacionesConUrl);
+            setLoading(false);
+        }
+
+        fetchPostulaciones();
+    }, []);
+
+    async function handleDelete(id: number) {
+        // Buscar la postulación para obtener la ruta del CV
+        const { data: postulacion, error: fetchError } = await supabase
+            .from("postulaciones")
+            .select("cv_storage_path")
+            .eq("id", id)
+            .single();
+
+        if (fetchError) {
+            toast.error("Error al obtener postulación: " + fetchError.message);
+            return;
+        }
+
+        if (!postulacion?.cv_storage_path) {
+            toast.error("No se encontró la ruta del CV para esta postulación.");
+            return;
+        }
+
+        // Borrar el archivo CV del storage
+        const { error: deleteFileError } = await supabase.storage
+            .from("cvs")
+            .remove([postulacion.cv_storage_path]);
+
+        if (deleteFileError) {
+            toast.error("Error al borrar archivo CV: " + deleteFileError.message);
+            return;
+        }
+
+        // Borrar la postulación en la base de datos
+        const { error: deletePostulacionError } = await supabase
+            .from("postulaciones")
+            .delete()
+            .eq("id", id);
+
+        if (deletePostulacionError) {
+            toast.error("Error al borrar postulación: " + deletePostulacionError.message);
+            return;
+        }
+
+        toast.success("Postulación y archivo CV borrados correctamente");
+        setPostulaciones((prev) => prev.filter((p) => p.id !== id));
     }
-  }, []);
 
-  const handlePageSizeChange = useCallback((value: string) => {
-    table.setPageSize(Number(value));
-  }, [table]);
 
-  if (loading) {
+    if (loading) return <p>Cargando postulaciones...</p>;
+
     return (
-      <div className="p-8 text-center text-lg text-primary">
-        Cargando postulaciones...
-      </div>
+        <div className="space-y-6">
+            <h1 className="text-2xl font-bold">Postulaciones</h1>
+
+            {postulaciones.length === 0 && <p>No hay postulaciones registradas.</p>}
+
+            {postulaciones.map((p) => {
+                const nombreCV =
+                    p.cv_storage_path?.split("-").slice(2).join("-") || "Archivo";
+
+                return (
+                    <Card key={p.id}>
+                        <CardHeader>
+                            <CardTitle>{nombreCV}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <p>
+                                <strong>Vacante para:</strong> {p.trabajos?.titulo_vacante || "—"}
+                            </p>
+                            <p>
+                                <strong>Fecha de publicación de empleo:</strong>{" "}
+                                {p.trabajos?.fecha_publicacion || "—"}
+                            </p>
+                            <p>
+                                <strong>Fecha postulación:</strong>{" "}
+                                {p.fecha_postulacion || "—"}
+                            </p>
+
+                            <div className="flex gap-4 mt-4">
+                                {p.cv_url && (
+                                    <>
+                                        <Button variant="outline" asChild>
+                                            <a
+                                                href={p.cv_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center"
+                                            >
+                                                <ExternalLink className="w-4 h-4 mr-1" /> Ver CV
+                                            </a>
+                                        </Button>
+
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => window.open(p.cv_url!, "_blank")}
+                                            className="flex items-center"
+                                        >
+                                            <Download className="w-4 h-4 mr-1" /> Descargar
+                                        </Button>
+                                    </>
+                                )}
+
+                                {/* Alert Dialog para borrar */}
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button variant="destructive" className="flex items-center">
+                                            <Trash2 className="w-4 h-4 mr-1" /> Borrar
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                ¿Estás seguro que deseas borrar esta postulación?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Esta acción no se puede deshacer. El CV y los datos de
+                                                la postulación se eliminarán permanentemente.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={() => handleDelete(p.id)}
+                                                className="bg-destructive text-white hover:bg-destructive/90"
+                                            >
+                                                Borrar
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </div>
+                        </CardContent>
+                    </Card>
+                );
+            })}
+        </div>
     );
-  } */
-  
-
-  return (
-    <div className="space-y-8">
-      hola
-      {/* <Card className="!p-4">
-        <h1 className="text-3xl font-bold text-primary">
-          Postulaciones
-        </h1>
-      </Card>
-
-      <Card className="!p-6">
-        <div className="flex gap-4 mb-6">
-          <Input
-            placeholder="Buscar por nombre, posición o email..."
-            value={globalFilter ?? ''}
-            onChange={handleGlobalFilterChange}
-            className="flex-1"
-          />
-          <Select
-            options={[
-              { label: "Todas", value: "all" },
-              { label: "En revisión", value: "En revisión" },
-              { label: "Entrevista", value: "Entrevista" },
-              { label: "Rechazada", value: "Rechazada" },
-              { label: "Aceptada", value: "Aceptada" }
-            ]}
-            onChange={handleStatusFilterChange}
-            placeholder="Filtrar por estado"
-          />
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b border-primary">
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id} className="py-3 px-4 text-left text-primary">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-b border-gray-100 hover:bg-tertiary/5 transition-colors"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="py-3 px-4">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="py-4 px-4 text-center text-gray-500"
-                  >
-                    No se encontraron resultados
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Anterior
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Siguiente
-            </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-primary">
-              Página {table.getState().pagination.pageIndex + 1} de{' '}
-              {table.getPageCount()}
-            </span>
-            <Select
-              options={[
-                { label: '10 por página', value: '10' },
-                { label: '20 por página', value: '20' },
-                { label: '30 por página', value: '30' },
-                { label: '40 por página', value: '40' },
-                { label: '50 por página', value: '50' },
-              ]}
-              value={table.getState().pagination.pageSize.toString()}
-              onChange={handlePageSizeChange}
-            />
-          </div>
-        </div>
-      </Card> */}
-    </div>
-  );
-} 
+}
