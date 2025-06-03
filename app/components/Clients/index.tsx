@@ -50,7 +50,7 @@ export default function Clients() {
     const secondRow = clients.slice(Math.ceil(clients.length / 2))
 
     return (
-        <section className="py-20 overflow-hidden">
+        <section id="clientes" className="py-20 overflow-hidden">
             <div className="mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

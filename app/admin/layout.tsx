@@ -41,7 +41,7 @@ export default function AdminLayout({
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pt-20 md:pt-0">
       <div className="flex">
         {isAuthenticated && <Sidebar />}
         <div className={`flex-1 ${isAuthenticated ? "p-4" : ""}`}>

@@ -22,6 +22,7 @@ import {
     AlertDialogCancel,
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 
 async function getSignedUrl(path: string): Promise<string | null> {
     const { data, error } = await supabase.storage
@@ -34,35 +35,90 @@ async function getSignedUrl(path: string): Promise<string | null> {
     return data?.signedUrl || null;
 }
 
+type PostulacionRaw = {
+    id: string;
+    cv_storage_path: string;
+    fecha_postulacion: string;
+    trabajos: {
+        titulo_vacante: string;
+        fecha_publicacion: string;
+    };
+};
+
+
 export default function Postulaciones() {
     const [postulaciones, setPostulaciones] = useState<
         Array<{
-            id: number;
+            id: string;
             cv_storage_path: string;
             fecha_postulacion: string;
-            trabajos: { titulo_vacante: string; fecha_publicacion: string };
+            trabajos: {
+                titulo_vacante: string;
+                fecha_publicacion: string;
+            } | null;
             cv_url?: string | null;
         }>
     >([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortAsc, setSortAsc] = useState(true);
+
+    async function handleOpenCv(path: string) {
+        const url = await getSignedUrl(path);
+        if (url) {
+            window.open(url, "_blank");
+        } else {
+            toast.error("Error obteniendo URL para el CV.");
+        }
+    }
+
+    async function handleDownloadCv(path: string, fileName: string) {
+        try {
+            const { data, error } = await supabase.storage
+                .from("cvs")
+                .download(path);
+
+            if (error) {
+                console.error("Error descargando archivo:", error);
+                toast.error("Error al descargar el archivo.");
+                return;
+            }
+
+            if (data) {
+                const url = window.URL.createObjectURL(data);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                window.URL.revokeObjectURL(url);
+            }
+        } catch (error) {
+            console.error("Error en descarga:", error);
+            toast.error("Error al descargar el archivo.");
+        }
+    }
+
 
     useEffect(() => {
         async function fetchPostulaciones() {
             const { data, error } = await supabase
                 .from("postulaciones")
                 .select(`
-          id,
-          cv_storage_path,
-          fecha_postulacion,
-          trabajos (
-            titulo_vacante,
-            fecha_publicacion
-          )
-        `)
-                .order("fecha_postulacion", { ascending: false });
+                    id,
+                    cv_storage_path,
+                    fecha_postulacion,
+                    trabajos (
+                    titulo_vacante,
+                    fecha_publicacion
+                    )
+                `) as unknown as { data: PostulacionRaw[]; error: undefined };
 
             if (error) {
-                toast.error("Error cargando postulaciones: " + error.message);
+                toast.error("Error cargando postulaciones: " + error);
                 setLoading(false);
                 return;
             }
@@ -71,19 +127,24 @@ export default function Postulaciones() {
                 (data || []).map(async (p) => {
                     const url = await getSignedUrl(p.cv_storage_path);
 
-                    // Aseguramos que los tipos sean correctos
+                    const trabajo = p.trabajos as {
+                        titulo_vacante: string;
+                        fecha_publicacion: string;
+                    };
+
                     return {
-                        id: Number(p.id),
+                        id: String(p.id),
                         cv_storage_path: String(p.cv_storage_path),
                         fecha_postulacion: String(p.fecha_postulacion),
                         trabajos: {
-                            titulo_vacante: String(p.trabajos?.[0]?.titulo_vacante || ""),
-                            fecha_publicacion: String(p.trabajos?.[0]?.fecha_publicacion || "")
+                            titulo_vacante: trabajo.titulo_vacante,
+                            fecha_publicacion: trabajo.fecha_publicacion,
                         },
                         cv_url: url,
                     };
                 })
             );
+
             setPostulaciones(postulacionesConUrl);
             setLoading(false);
         }
@@ -91,7 +152,7 @@ export default function Postulaciones() {
         fetchPostulaciones();
     }, []);
 
-    async function handleDelete(id: number) {
+    async function handleDelete(id: string) {
         // Buscar la postulación para obtener la ruta del CV
         const { data: postulacion, error: fetchError } = await supabase
             .from("postulaciones")
@@ -134,55 +195,109 @@ export default function Postulaciones() {
         setPostulaciones((prev) => prev.filter((p) => p.id !== id));
     }
 
+    const filteredPostulaciones = postulaciones
+        .filter((p) =>
+            p.trabajos?.titulo_vacante
+                ?.toLowerCase()
+                .includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => {
+            const dateA = new Date(a.fecha_postulacion).getTime();
+            const dateB = new Date(b.fecha_postulacion).getTime();
+            return sortAsc ? dateA - dateB : dateB - dateA;
+        });
 
-    if (loading) return <p>Cargando postulaciones...</p>;
+    if (loading) {
+        return (
+            <div className="space-y-6">
+                <Card variant="neubrutalist" className="!p-4">
+                    <h1 className="text-3xl font-bold text-primary uppercase tracking-wide">
+                        Postulaciones
+                    </h1>
+                </Card>
+                <Card variant="neubrutalist" className="!p-6">
+                    <p className="text-center font-bold text-lg">Cargando postulaciones...</p>
+                </Card>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Postulaciones</h1>
+            <Card variant="neubrutalist" className="!p-4">
+                <h1 className="text-3xl font-bold text-primary uppercase tracking-wide">
+                    Postulaciones
+                </h1>
+            </Card>
 
-            {postulaciones.length === 0 && <p>No hay postulaciones registradas.</p>}
+            {postulaciones.length === 0 && (
+                <Card variant="neubrutalist" className="!p-6">
+                    <p className="text-center font-bold text-lg">No hay postulaciones registradas.</p>
+                </Card>
+            )}
 
-            {postulaciones.map((p) => {
+            <Card variant="neubrutalist" className="!p-4 space-y-4">
+                <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <Input
+                        variant="brutalist"
+                        type="text"
+                        placeholder="Buscar por título de vacante..."
+                        className="px-4 py-2 w-full md:w-1/2"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <Button
+                        variant="brutalist"
+                        className="bg-[#8be9fd] hover:bg-[#50fa7b] text-black font-bold uppercase"
+                        onClick={() => setSortAsc(!sortAsc)}
+                    >
+                        Ordenar por fecha: {sortAsc ? "Ascendente" : "Descendente"}
+                    </Button>
+                </div>
+            </Card>
+
+            {filteredPostulaciones.map((p) => {
                 const nombreCV =
                     p.cv_storage_path?.split("-").slice(2).join("-") || "Archivo";
 
                 return (
-                    <Card key={p.id}>
+                    <Card key={p.id} variant="neubrutalist">
                         <CardHeader>
-                            <CardTitle>{nombreCV}</CardTitle>
+                            <CardTitle className="text-xl font-black uppercase tracking-wide text-black">
+                                {nombreCV}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            <p>
-                                <strong>Vacante para:</strong> {p.trabajos?.titulo_vacante || "—"}
+                            <p className="font-bold">
+                                <strong className="text-primary">Vacante para:</strong> {p.trabajos?.titulo_vacante || "—"}
                             </p>
-                            <p>
-                                <strong>Fecha de publicación de empleo:</strong>{" "}
-                                {p.trabajos?.fecha_publicacion || "—"}
+                            <p className="font-bold">
+                                <strong className="text-primary">Fecha de publicación de empleo:</strong>{" "}
+                                {p.trabajos?.fecha_publicacion ? new Date(p.trabajos.fecha_publicacion).toLocaleDateString('es-AR') : "—"}
                             </p>
-                            <p>
-                                <strong>Fecha postulación:</strong>{" "}
-                                {p.fecha_postulacion || "—"}
+                            <p className="font-bold">
+                                <strong className="text-primary">Fecha postulación:</strong>{" "}
+                                {p.fecha_postulacion ? new Date(p.fecha_postulacion).toLocaleDateString('es-AR') : "—"}
                             </p>
 
-                            <div className="flex gap-4 mt-4">
+                            <div className="flex gap-4 mt-4 flex-wrap">
                                 {p.cv_url && (
                                     <>
-                                        <Button variant="outline" asChild>
+                                        <Button variant="brutalist" asChild className="bg-[#ff69b4] hover:bg-[#e44f9c] text-white">
                                             <a
-                                                href={p.cv_url}
+                                                onClick={() => handleOpenCv(p.cv_storage_path)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center"
+                                                className="flex items-center font-bold uppercase"
                                             >
                                                 <ExternalLink className="w-4 h-4 mr-1" /> Ver CV
                                             </a>
                                         </Button>
 
                                         <Button
-                                            variant="secondary"
-                                            onClick={() => window.open(p.cv_url!, "_blank")}
-                                            className="flex items-center"
+                                            variant="brutalist"
+                                            onClick={() => handleDownloadCv(p.cv_storage_path, nombreCV)}
+                                            className="flex items-center font-bold uppercase bg-[#dd63ff] hover:bg-[#bd13ec] text-white"
                                         >
                                             <Download className="w-4 h-4 mr-1" /> Descargar
                                         </Button>
@@ -192,25 +307,24 @@ export default function Postulaciones() {
                                 {/* Alert Dialog para borrar */}
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                        <Button variant="destructive" className="flex items-center">
+                                        <Button variant="brutalist" className="flex items-center font-bold uppercase bg-[#ff97d9] hover:bg-[#e44f9c] text-black">
                                             <Trash2 className="w-4 h-4 mr-1" /> Borrar
                                         </Button>
                                     </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>
+                                    <AlertDialogContent variant="neubrutalist">
+                                        <AlertDialogHeader variant="neubrutalist">
+                                            <AlertDialogTitle variant="neubrutalist">
                                                 ¿Estás seguro que deseas borrar esta postulación?
                                             </AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                Esta acción no se puede deshacer. El CV y los datos de
-                                                la postulación se eliminarán permanentemente.
+                                            <AlertDialogDescription variant="neubrutalist">
+                                                Esta acción no se puede deshacer. La postulación y el archivo CV se eliminarán permanentemente.
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                        <AlertDialogFooter variant="neubrutalist">
+                                            <AlertDialogCancel variant="neubrutalist">Cancelar</AlertDialogCancel>
                                             <AlertDialogAction
+                                                variant="neubrutalist"
                                                 onClick={() => handleDelete(p.id)}
-                                                className="bg-destructive text-white hover:bg-destructive/90"
                                             >
                                                 Borrar
                                             </AlertDialogAction>

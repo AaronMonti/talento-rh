@@ -21,17 +21,17 @@ const links = [
   },
   {
     title: "Nosotros",
-    href: "/shop",
+    href: "#nosotros",
     src: picture2
   },
   {
     title: "Clientes",
-    href: "/about",
+    href: "#clientes",
     src: picture3
   },
   {
     title: "Contacto",
-    href: "/lookbook",
+    href: "#contacto",
     src: picture4
   },
   {
@@ -39,11 +39,6 @@ const links = [
     href: "/empleos",
     src: picture5
   },
-  {
-    title: "Postulate",
-    href: "/empleos",
-    src: picture5
-  }
 ]
 
 export default function Index() {

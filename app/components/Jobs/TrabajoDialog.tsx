@@ -17,18 +17,16 @@ import {
     FormLabel,
     FormControl,
 } from "@/components/ui/form";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Trabajo } from "@/types";
-import { Building, CircleDollarSign, MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/app/lib/supabase";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
     titulo_vacante: z.string(),
@@ -97,19 +95,6 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
         },
     });
 
-    const getModalidadColor = (modalidad: string) => {
-        switch (modalidad.toLowerCase()) {
-            case "remoto":
-                return "bg-green-100 text-green-800";
-            case "presencial":
-                return "bg-blue-100 text-blue-800";
-            case "híbrido":
-                return "bg-purple-100 text-purple-800";
-            default:
-                return "bg-gray-100 text-gray-800";
-        }
-    };
-
     async function onSubmit(data: FormValues) {
         const { desde, hasta, moneda } = data.rango_salarial;
         let rango = "";
@@ -159,50 +144,20 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {mode === "edit" ? (
-                    <Card className="h-full transition-shadow hover:shadow-md hover:border-primary cursor-pointer">
-                        <CardContent className="p-6 flex flex-col h-full">
-                            <div className="flex justify-between mb-3">
-                                <Badge className={getModalidadColor(trabajo?.modalidad ?? "")}>
-                                    {trabajo?.modalidad}
-                                </Badge>
-                            </div>
-                            <h2 className="text-xl font-semibold mb-1">
-                                {trabajo?.titulo_vacante}
-                            </h2>
-                            <div className="flex items-center text-sm text-gray-600 mb-2">
-                                <Building size={16} className="mr-1" />
-                                {trabajo?.empresa}
-                            </div>
-                            <div className="space-y-1 mb-4 text-sm text-gray-500">
-                                {trabajo?.ubicacion && (
-                                    <div className="flex items-center">
-                                        <MapPin size={16} className="mr-1" />
-                                        {trabajo.ubicacion}
-                                    </div>
-                                )}
-                                {trabajo?.rango_salarial && (
-                                    <div className="flex items-center">
-                                        <CircleDollarSign size={16} className="mr-1" />
-                                        {trabajo.rango_salarial}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="mt-auto pt-4 border-t border-gray-100 text-primary text-sm font-medium">
-                                Ver detalles →
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <Button variant="brutalist" size="sm" className="rounded-none flex items-center gap-1 bg-[#dd63ff] hover:bg-[#bd13ec] text-white">
+                        Editar
+                    </Button>
                 ) : (
-                    <Button>Crear Trabajo</Button>
+                    <Button variant="brutalist" className="bg-[#e44f9c] hover:bg-[#bd13ec] text-white">Crear Trabajo</Button>
                 )}
             </DialogTrigger>
 
-            <DialogContent className="w-full max-w-4xl sm:max-w-3xl md:max-w-5xl lg:max-w-6xl max-h-[90vh] overflow-y-auto px-4 sm:px-6 lg:px-8">
-                <DialogHeader>
-                    <DialogTitle>
+            <DialogContent className="w-full max-w-4xl sm:max-w-3xl md:max-w-5xl lg:max-w-6xl max-h-[90vh] overflow-y-auto px-4 sm:px-6 lg:px-8" variant="brutalist">
+                <DialogHeader variant="brutalist">
+                    <DialogTitle variant="brutalist">
                         {mode === "edit" ? trabajo?.titulo_vacante : "Crear nuevo trabajo"}
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription variant="brutalist">
                         {mode === "edit" ? "Detalles del trabajo" : "Complete los datos para crear el trabajo"}
                     </DialogDescription>
                 </DialogHeader>
@@ -215,9 +170,10 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
                             name="activo"
                             render={({ field }) => (
                                 <FormItem className="flex items-center space-x-2">
-                                    <FormLabel className="mb-0">Activo</FormLabel>
+                                    <FormLabel variant="brutalist" className="mb-0">Activo</FormLabel>
                                     <FormControl>
                                         <Switch
+                                            variant="brutalist"
                                             checked={field.value}
                                             onCheckedChange={field.onChange}
                                             disabled={mode === "edit" ? !editMode : false}
@@ -241,7 +197,7 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
                                         ) {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel className="capitalize">
+                                                    <FormLabel variant="brutalist" className="capitalize">
                                                         {field.replace(/_/g, " ")}
                                                     </FormLabel>
                                                     <FormControl>
@@ -253,6 +209,7 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
                                                             }
                                                             onChange={(e) => fieldProps.onChange(e.target.value)}
                                                             disabled={mode === "edit" ? !editMode : false}
+                                                            variant="brutalist"
                                                         />
                                                     </FormControl>
                                                 </FormItem>
@@ -261,7 +218,7 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
 
                                         return (
                                             <FormItem>
-                                                <FormLabel className="capitalize">
+                                                <FormLabel variant="brutalist" className="capitalize">
                                                     {field.replace(/_/g, " ")}
                                                 </FormLabel>
                                                 <FormControl>
@@ -273,6 +230,7 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
                                                         }
                                                         onChange={(e) => fieldProps.onChange(e.target.value)}
                                                         disabled={mode === "edit" ? !editMode : false}
+                                                        variant="brutalist"
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -281,19 +239,20 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
                                 />
                             ))}
 
-                        <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex gap-4">
                             <FormField
                                 control={form.control}
                                 name="rango_salarial.desde"
                                 render={({ field }) => (
                                     <FormItem className="w-full md:w-1/3">
-                                        <FormLabel>Salario Desde</FormLabel>
+                                        <FormLabel variant="brutalist">Salario Desde</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Ej: 800000"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 disabled={mode === "edit" ? !editMode : false}
+                                                variant="brutalist"
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -305,13 +264,14 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
                                 name="rango_salarial.hasta"
                                 render={({ field }) => (
                                     <FormItem className="w-full md:w-1/3">
-                                        <FormLabel>Salario Hasta</FormLabel>
+                                        <FormLabel variant="brutalist">Salario Hasta</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="Ej: 1000000"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 disabled={mode === "edit" ? !editMode : false}
+                                                variant="brutalist"
                                             />
                                         </FormControl>
                                     </FormItem>
@@ -323,30 +283,35 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
                                 name="rango_salarial.moneda"
                                 render={({ field }) => (
                                     <FormItem className="w-full md:w-1/3">
-                                        <FormLabel>Moneda</FormLabel>
+                                        <FormLabel variant="brutalist">Moneda</FormLabel>
                                         <FormControl>
-                                            <select
-                                                className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
+                                            <Select
                                                 value={field.value}
-                                                onChange={(e) => field.onChange(e.target.value)}
+                                                onValueChange={field.onChange}
                                                 disabled={mode === "edit" ? !editMode : false}
                                             >
-                                                <option value="ARS">ARS</option>
-                                                <option value="USD">USD</option>
-                                            </select>
+                                                <SelectTrigger className="w-full" variant="brutalist">
+                                                    <SelectValue placeholder="Seleccionar moneda" />
+                                                </SelectTrigger>
+                                                <SelectContent variant="brutalist">
+                                                    <SelectItem value="ARS" variant="brutalist">ARS</SelectItem>
+                                                    <SelectItem value="USD" variant="brutalist">USD</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                         </FormControl>
                                     </FormItem>
                                 )}
                             />
                         </div>
 
-                        <DialogFooter className="mt-6 flex justify-start gap-4">
+                        <DialogFooter variant="brutalist">
                             {mode === "edit" ? (
                                 !editMode ? (
                                     <Button
                                         type="button"
+                                        variant="brutalist"
                                         onClick={() => setEditMode(true)}
-                                        className="text-lg px-6 py-3"
+                                        className="text-lg px-6 py-3 bg-[#ff69b4] hover:bg-[#e44f9c] text-white"
                                     >
                                         Editar
                                     </Button>
@@ -354,19 +319,19 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
                                     <div className="flex gap-4">
                                         <Button
                                             type="button"
-                                            variant="secondary"
+                                            variant="brutalist"
                                             onClick={() => setEditMode(false)}
-                                            className="text-lg px-6 py-3"
+                                            className="text-lg px-6 py-3 bg-[#ff97d9] hover:bg-[#ff69b4] text-black"
                                         >
                                             Cancelar
                                         </Button>
-                                        <Button type="submit" className="text-lg px-6 py-3">
+                                        <Button variant="brutalist" type="submit" className="text-lg px-6 py-3 bg-[#bd13ec] hover:bg-[#e44f9c] text-white">
                                             Guardar
                                         </Button>
                                     </div>
                                 )
                             ) : (
-                                <Button type="submit" className="text-lg px-6 py-3">
+                                <Button variant="brutalist" type="submit" className="text-lg px-6 py-3 bg-[#bd13ec] hover:bg-[#e44f9c] text-white">
                                     Crear
                                 </Button>
                             )}

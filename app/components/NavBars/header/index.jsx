@@ -27,7 +27,7 @@ export default function index() {
             </div>
             <motion.div variants={background} initial="initial" animate={isActive ? "open" : "closed"} className={styles.background}></motion.div>
             <AnimatePresence mode="wait">
-                {isActive && <Nav />}
+                {isActive && <Nav onClose={() => setIsActive(false)} />}
             </AnimatePresence>
         </div >
     )

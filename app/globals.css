@@ -39,6 +39,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --neubrutal-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
 }
 
 @theme inline {
@@ -132,4 +133,30 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.neubrutal-button {
+  @apply border-2 border-black font-bold uppercase tracking-wide px-4 py-2;
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  transition: all 0.1s ease;
+}
+
+.neubrutal-button:hover, 
+.neubrutal-button:focus {
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+  transform: translate(2px, 2px);
+}
+
+.neubrutal-button:focus {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.neubrutal-panel {
+  background-color: #fff;
+  box-shadow: var(--neubrutal-shadow);
+}
+
+.shadow-neubrutal {
+  box-shadow: var(--neubrutal-shadow);
 }
