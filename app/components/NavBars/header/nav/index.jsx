@@ -35,13 +35,13 @@ const links = [
     src: picture4
   },
   {
-    title: "Ofertas Laborales",
+    title: "Búsquedas Laborales",
     href: "/empleos",
     src: picture5
   },
 ]
 
-export default function Index() {
+export default function Index({ onClose }) {
 
   const [selectedLink, setSelectedLink] = useState({ isActive: false, index: 0 });
 
@@ -49,7 +49,7 @@ export default function Index() {
     <motion.div variants={height} initial="initial" animate="enter" exit="exit" className={styles.nav}>
       <div className={styles.wrapper}>
         <div className={styles.container}>
-          <Body links={links} selectedLink={selectedLink} setSelectedLink={setSelectedLink} />
+          <Body links={links} selectedLink={selectedLink} setSelectedLink={setSelectedLink} onClose={onClose} />
           <Footer />
         </div>
         <Image src={links[selectedLink.index].src} isActive={selectedLink.isActive} />

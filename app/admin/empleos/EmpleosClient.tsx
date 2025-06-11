@@ -40,6 +40,20 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
         }
     };
 
+    // Función para manejar la creación de un nuevo trabajo
+    const handleCreate = (nuevoTrabajo: Trabajo) => {
+        setTrabajos((prev) => [...prev, nuevoTrabajo]);
+    };
+
+    // Función para manejar la actualización de un trabajo existente
+    const handleUpdate = (trabajoActualizado: Trabajo) => {
+        setTrabajos((prev) =>
+            prev.map((trabajo) =>
+                trabajo.id === trabajoActualizado.id ? trabajoActualizado : trabajo
+            )
+        );
+    };
+
     const filteredTrabajos = trabajos
         .filter((t) =>
             t.titulo_vacante
@@ -68,7 +82,7 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                     <h1 className="text-3xl font-bold text-primary uppercase tracking-wide">
                         Gestión de Empleos
                     </h1>
-                    <TrabajoDialog mode="create" />
+                    <TrabajoDialog mode="create" onCreate={handleCreate} />
                 </div>
             </Card>
 
@@ -78,7 +92,7 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                         No hay ofertas de empleo disponibles en este momento.
                     </p>
                     <div className="flex justify-center mt-4">
-                        <TrabajoDialog mode="create" />
+                       <TrabajoDialog mode="create" onCreate={handleCreate} />
                     </div>
                 </Card>
             ) : (
@@ -146,7 +160,11 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                                         </span>
 
                                         <div className="flex gap-2">
-                                            <TrabajoDialog trabajo={trabajo} mode="edit" />
+                                            <TrabajoDialog 
+                                                trabajo={trabajo} 
+                                                mode="edit" 
+                                                onUpdate={handleUpdate}
+                                            />
 
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>

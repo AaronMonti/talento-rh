@@ -14,62 +14,51 @@ import { useScroll, useTransform, motion } from 'motion/react';
 import { useRef } from 'react';
 
 export default function Index() {
-
     const container = useRef(null);
+
     const { scrollYProgress } = useScroll({
         target: container,
         layoutEffect: false,
         offset: ['start start', 'end end']
-    })
+    });
 
     const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
     const scale5 = useTransform(scrollYProgress, [0, 1], [1, 5]);
     const scale6 = useTransform(scrollYProgress, [0, 1], [1, 6]);
 
     const pictures = [
-        {
-            src: Picture1, // Imagen central con Talento+RH
-            scale: scale6
-        },
-        {
-            src: Picture2,
-            scale: scale4
-        },
-        {
-            src: Picture3,
-            scale: scale4
-        },
-        {
-            src: Picture4,
-            scale: scale4
-        },
-        {
-            src: Picture5,
-            scale: scale5
-        },
-        {
-            src: Picture6,
-            scale: scale5
-        },
-        {
-            src: Picture7,
-            scale: scale4
-        },
-        {
-            src: Picture2, // Repetimos algunas imágenes para completar el patrón
-            scale: scale4
-        },
-        {
-            src: Picture3,
-            scale: scale4
-        }
-    ]
+        { src: Picture1, scale: scale6 }, // Imagen central Talento+RH
+        { src: Picture2, scale: scale4 },
+        { src: Picture3, scale: scale4 },
+        { src: Picture4, scale: scale4 },
+        { src: Picture5, scale: scale5 },
+        { src: Picture6, scale: scale5 },
+        { src: Picture7, scale: scale4 },
+        { src: Picture2, scale: scale4 },
+        { src: Picture3, scale: scale4 }
+    ];
 
     return (
-        <div ref={container} className={styles.container}>
-            <div className={styles.sticky}>
-                {
-                    pictures.map(({ src, scale }, index) => (
+        <div className={styles.wrapper}>
+            {/* Versión mobile: imagen fija con texto encima */}
+            <div className="relative h-screen w-full md:hidden">
+                <Image
+                    src={Picture1}
+                    alt="Talento+RH"
+                    placeholder="blur"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+                <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40">
+                    <h2 className="text-white text-3xl font-bold">Talento+RH</h2>
+                </div>
+            </div>
+
+            {/* Versión desktop: efecto de scroll animado */}
+            <div ref={container} className={`${styles.container} hidden md:block`}>
+                <div className={styles.sticky}>
+                    {pictures.map(({ src, scale }, index) => (
                         <motion.div key={index} style={{ scale }} className={styles.el}>
                             <div className={styles.imageContainer}>
                                 <Image
@@ -85,9 +74,9 @@ export default function Index() {
                                 )}
                             </div>
                         </motion.div>
-                    ))
-                }
+                    ))}
+                </div>
             </div>
         </div>
-    )
+    );
 }

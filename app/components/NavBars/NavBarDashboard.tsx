@@ -176,7 +176,7 @@ const MobileNavbar = () => {
                         <Dialog.Close asChild>
                           <motion.button
                             onClick={handleLogout}
-                            className="bg-red-600 px-4 py-2 text-sm font-bold text-white border-2 border-black"
+                            className="bg-red-500 px-4 py-2 text-sm font-bold text-white border-2 border-black"
                             style={{ boxShadow: "2px 2px 0px 0px rgba(0,0,0,1)" }}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -316,7 +316,7 @@ export const Sidebar = () => {
                 className={`text-left text-white mb-2  ${open ? 'w-full' : 'flex w-full justify-center'}`}
               >
                 <motion.div
-                  className={`flex items-center gap-3 bg-red-600 border-2 border-black ${open ? 'px-4 py-3' : 'p-3 justify-center'
+                  className={`flex items-center gap-3 bg-red-500 border-2 border-black ${open ? 'px-4 py-3' : 'p-3 justify-center'
                     }`}
                   style={{ boxShadow: "4px 4px 0px 0px rgba(0,0,0,1)" }}
                   whileHover={{ scale: 1.05 }}

@@ -1,19 +1,15 @@
-import { supabase } from "../lib/supabase";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building, MapPin, CircleDollarSign } from "lucide-react";
 import Link from "next/link";
 import CVUploadDialog from "../components/CVUploadDialog";
 import { Trabajo } from "@/types";
+import { getTrabajosActivos } from "../actions/getTrabajos";
 
 export default async function TrabajosPage() {
-    const { data, error } = await supabase
-        .from("trabajos")
-        .select("*")
-        .eq("activo", true)
-        .order("fecha_publicacion", { ascending: false });
-
-    if (error) {
+    const data = await getTrabajosActivos();
+    console.log("Datos de trabajos:", data);
+    /* if (error) {
         return (
             <div className="max-w-6xl mx-auto p-6">
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
@@ -21,7 +17,7 @@ export default async function TrabajosPage() {
                 </div>
             </div>
         );
-    }
+    } */
 
     if (!data || data.length === 0) {
         return (

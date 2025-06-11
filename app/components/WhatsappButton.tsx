@@ -2,8 +2,8 @@
 import Link from 'next/link'
 
 export default function WhatsappButton() {
-  const whatsappNumber = '5491123456789' // reemplaza con tu número
-  const message = 'Hola, quiero más información!'
+  const whatsappNumber = '5491165899729'
+  const message = 'Hola, me gustaria más información sobre tus servicios!'
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
 
   return (

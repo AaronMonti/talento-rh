@@ -27,6 +27,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/app/lib/supabase";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 const formSchema = z.object({
     titulo_vacante: z.string(),
@@ -48,12 +49,14 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface TrabajoDialogProps {
-    mode: "create" | "edit";
-    trabajo?: Trabajo;
-}
+type TrabajoDialogProps = {
+  mode: 'create' | 'edit';
+  trabajo?: Trabajo;
+  onCreate?: (nuevoTrabajo: Trabajo) => void;
+  onUpdate?: (trabajoActualizado: Trabajo) => void; // Nueva prop para actualizar
+};
 
-export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
+export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: TrabajoDialogProps) {
     const [open, setOpen] = useState(false);
     const [editMode, setEditMode] = useState(mode === "create");
 
@@ -111,25 +114,50 @@ export default function TrabajoDialog({ mode, trabajo }: TrabajoDialogProps) {
 
         if (mode === "edit" && trabajo?.id) {
             // Actualizar
-            const { error } = await supabase
+            const { data: updatedData, error } = await supabase
                 .from("trabajos")
                 .update(payload)
-                .eq("id", trabajo.id);
+                .eq("id", trabajo.id)
+                .select() // Importante: obtener los datos actualizados
+                .single();
 
             if (error) {
                 console.error("Error al actualizar:", error.message);
+                toast.error("Error al actualizar trabajo: " + error.message);
             } else {
                 console.log("Trabajo actualizado");
+                toast.success("Trabajo actualizado correctamente");
+                
+                // Llamar al callback para actualizar el estado en el componente padre
+                if (onUpdate && updatedData) {
+                    onUpdate(updatedData as Trabajo);
+                }
+                
                 setEditMode(false);
+                setOpen(false);
             }
         } else {
             // Crear nuevo
-            const { error } = await supabase.from("trabajos").insert([payload]);
+            const { data: newData, error } = await supabase
+                .from("trabajos")
+                .insert([payload])
+                .select() // Importante: obtener los datos del nuevo registro
+                .single();
+
             if (error) {
                 console.error("Error al crear:", error.message);
+                toast.error("Error al crear trabajo: " + error.message);
             } else {
                 console.log("Trabajo creado");
+                toast.success("Trabajo creado correctamente");
+                
+                // Llamar al callback para agregar el nuevo trabajo al estado
+                if (onCreate && newData) {
+                    onCreate(newData as Trabajo);
+                }
+                
                 setOpen(false);
+                form.reset(); // Limpiar el formulario después de crear
             }
         }
     }

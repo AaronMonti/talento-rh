@@ -26,15 +26,18 @@ export default function About() {
                 </div>
             </section>
             {/* Fundadora Section */}
-            <section className="py-20 px-4 bg-gray-50">
+            <section className="text-center md:text-left py-20 px-4 bg-gray-50">
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-                    <Image
-                        src="/maria-flor.jpg"
-                        alt="María Florencia Luna"
-                        width={400}
-                        height={400}
-                        className="rounded-lg object-cover"
-                    />
+                   <div className="mx-auto w-72 md:w-96 aspect-square overflow-hidden rounded-full">
+                        <Image
+                            src="/maria-flor.jpg"
+                            alt="María Florencia Luna"
+                            width={200}
+                            height={200}
+                            className="object-cover object-top w-full h-full"
+                        />
+                    </div>
+
                     <div>
                         <p className="text-primary text-xl md:text-2xl font-semibold uppercase tracking-wide mb-2">
                             Fundadora
@@ -50,7 +53,7 @@ export default function About() {
             </section>
 
             {/* Misión Section */}
-            <section className="py-16 px-4">
+            <section className="text-center md:text-left py-16 px-4">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <motion.div

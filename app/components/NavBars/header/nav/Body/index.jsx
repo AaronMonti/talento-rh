@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styles from './style.module.scss';
 import { blur, translate } from '../../anim';
 
-export default function Body({ links, selectedLink, setSelectedLink }) {
+export default function Body({ links, selectedLink, setSelectedLink, onClose }) {
 
     const getChars = (word) => {
         let chars = [];
@@ -45,11 +45,11 @@ export default function Body({ links, selectedLink, setSelectedLink }) {
             {links.map((link, index) => {
                 const { title, href } = link;
                 const isLast = index === links.length - 1;
-                const isJobs = title === "Ofertas Laborales" || title === "Postulate"; // Verifica si es el link "Trabajos"
+                const isJobs = title === "Búsquedas Laborales";
 
                 return (
                     <div key={`link_${index}`} className="flex items-center">
-                        <Link href={href}>
+                        <Link href={href} onClick={onClose}>
                             <motion.p
                                 onMouseOver={() => { setSelectedLink({ isActive: true, index }) }}
                                 onMouseLeave={() => { setSelectedLink({ isActive: false, index }) }}

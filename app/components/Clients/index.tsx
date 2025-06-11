@@ -101,29 +101,6 @@ export default function Clients() {
                         </div>
                     </div>
                 </div>
-
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false }}
-                    transition={{ duration: 0.6 }}
-                    className="mt-16 text-center"
-                >
-                    <div className="flex flex-wrap justify-center gap-8">
-                        <div className="text-center px-8">
-                            <div className="text-4xl font-bold text-primary mb-2">38+</div>
-                            <p className="text-gray-600">Clientes Activos</p>
-                        </div>
-                        <div className="text-center px-8">
-                            <div className="text-4xl font-bold text-primary mb-2">95%</div>
-                            <p className="text-gray-600">Tasa de Retención</p>
-                        </div>
-                        <div className="text-center px-8">
-                            <div className="text-4xl font-bold text-primary mb-2">12+</div>
-                            <p className="text-gray-600">Sectores Industriales</p>
-                        </div>
-                    </div>
-                </motion.div>
             </div>
         </section>
     )
