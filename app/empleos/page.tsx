@@ -55,7 +55,7 @@ export default async function TrabajosPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {data.map((trabajo: Trabajo) => (
                         <Link href={`/empleos/${trabajo.id}`} key={trabajo.id} className="group">
-                            <Card className="h-full transition-shadow hover:shadow-md hover:border-primary">
+                            <Card className="h-full transition-shadow hover:shadow-md hover:border-primary bg-fuchsia-50">
                                 <CardContent className="p-6 flex flex-col h-full">
                                     <div className="flex justify-between mb-3">
                                         <Badge className={getModalidadColor(trabajo.modalidad)}>
@@ -83,7 +83,7 @@ export default async function TrabajosPage() {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="mt-auto pt-4 border-t border-gray-100">
+                                    <div className="mt-auto pt-4 border-t border-gray-700">
                                         <span className="text-primary text-sm font-medium inline-flex items-center group-hover:underline">
                                             Ver detalles
                                             <svg className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

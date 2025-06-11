@@ -51,7 +51,7 @@ export default async function TrabajoDetallePage({
                 </Link>
             </Button>
 
-            <Card>
+            <Card className="bg-fuchsia-50">
                 <CardContent className="p-6 space-y-6">
                     <header className="flex justify-between items-start">
                         <div>

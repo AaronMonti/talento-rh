@@ -8,6 +8,8 @@ import Picture4 from '../../../public/jobs-nav-image.png';
 import Picture5 from '../../../public/pexels-fauxels-3184291.jpg';
 import Picture6 from '../../../public/pexels-fauxels-3183186.jpg';
 import Picture7 from '../../../public/about-nav-image.jpg';
+import Picture8 from '../../../public/papeles-comerciales-de-naturaleza-muerta-con-varias-piezas-de-mecanismo.jpg';
+import Picture9 from '../../../public/consulta-con-abogado.jpg';
 
 import Image from 'next/image';
 import { useScroll, useTransform, motion } from 'motion/react';
@@ -34,8 +36,8 @@ export default function Index() {
         { src: Picture5, scale: scale5 },
         { src: Picture6, scale: scale5 },
         { src: Picture7, scale: scale4 },
-        { src: Picture2, scale: scale4 },
-        { src: Picture3, scale: scale4 }
+        { src: Picture8, scale: scale4 },
+        { src: Picture9, scale: scale4 }
     ];
 
     return (

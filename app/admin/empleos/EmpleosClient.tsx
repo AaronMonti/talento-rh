@@ -26,7 +26,7 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
     const [searchTerm, setSearchTerm] = useState("");
     const [sortAsc, setSortAsc] = useState(true);
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = async (id: string) => {
         const { error } = await supabase
             .from("trabajos")
             .delete()
@@ -36,13 +36,15 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
             toast.error("Error al borrar trabajo: " + error.message);
         } else {
             toast.success("Trabajo borrado correctamente");
-            setTrabajos((prev) => prev.filter((trabajo) => Number(trabajo.id) !== id));
+            setTrabajos((prev) => prev.filter((trabajo) => trabajo.id !== id));
         }
     };
+
 
     // Función para manejar la creación de un nuevo trabajo
     const handleCreate = (nuevoTrabajo: Trabajo) => {
         setTrabajos((prev) => [...prev, nuevoTrabajo]);
+        setSearchTerm("");
     };
 
     // Función para manejar la actualización de un trabajo existente
@@ -92,7 +94,7 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                         No hay ofertas de empleo disponibles en este momento.
                     </p>
                     <div className="flex justify-center mt-4">
-                       <TrabajoDialog mode="create" onCreate={handleCreate} />
+                        <TrabajoDialog mode="create" onCreate={handleCreate} />
                     </div>
                 </Card>
             ) : (
@@ -160,9 +162,9 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                                         </span>
 
                                         <div className="flex gap-2">
-                                            <TrabajoDialog 
-                                                trabajo={trabajo} 
-                                                mode="edit" 
+                                            <TrabajoDialog
+                                                trabajo={trabajo}
+                                                mode="edit"
                                                 onUpdate={handleUpdate}
                                             />
 
@@ -189,7 +191,7 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                                                         <AlertDialogCancel variant="neubrutalist">Cancelar</AlertDialogCancel>
                                                         <AlertDialogAction
                                                             variant="neubrutalist"
-                                                            onClick={() => handleDelete(Number(trabajo.id))}
+                                                            onClick={() => handleDelete(trabajo.id)}
                                                         >
                                                             Borrar
                                                         </AlertDialogAction>

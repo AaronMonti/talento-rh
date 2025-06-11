@@ -28,11 +28,11 @@ export default function CVDropzone({ onFileDrop, file, error }: Props) {
         <div className="space-y-2">
             <Card
                 {...getRootProps()}
-                className={`w-full max-w-full p-6 text-center cursor-pointer border-2 border-dashed rounded-lg transition ${isDragActive
-                        ? "border-blue-500 bg-blue-50"
-                        : error
-                            ? "border-red-500 bg-red-50"
-                            : "border-gray-300"
+                className={`bg-fuchsia-50 w-full max-w-full p-6 text-center cursor-pointer border-2 border-dashed rounded-lg transition ${isDragActive
+                    ? "border-blue-500 bg-blue-50"
+                    : error
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300"
                     }`}
             >
                 <input {...getInputProps()} />
