@@ -50,10 +50,10 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 type TrabajoDialogProps = {
-  mode: 'create' | 'edit';
-  trabajo?: Trabajo;
-  onCreate?: (nuevoTrabajo: Trabajo) => void;
-  onUpdate?: (trabajoActualizado: Trabajo) => void; // Nueva prop para actualizar
+    mode: 'create' | 'edit';
+    trabajo?: Trabajo;
+    onCreate?: (nuevoTrabajo: Trabajo) => void;
+    onUpdate?: (trabajoActualizado: Trabajo) => void; // Nueva prop para actualizar
 };
 
 export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: TrabajoDialogProps) {
@@ -127,12 +127,12 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
             } else {
                 console.log("Trabajo actualizado");
                 toast.success("Trabajo actualizado correctamente");
-                
+
                 // Llamar al callback para actualizar el estado en el componente padre
                 if (onUpdate && updatedData) {
                     onUpdate(updatedData as Trabajo);
                 }
-                
+
                 setEditMode(false);
                 setOpen(false);
             }
@@ -150,12 +150,12 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
             } else {
                 console.log("Trabajo creado");
                 toast.success("Trabajo creado correctamente");
-                
+
                 // Llamar al callback para agregar el nuevo trabajo al estado
                 if (onCreate && newData) {
                     onCreate(newData as Trabajo);
                 }
-                
+
                 setOpen(false);
                 form.reset(); // Limpiar el formulario después de crear
             }
@@ -226,7 +226,7 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
                                             return (
                                                 <FormItem>
                                                     <FormLabel variant="brutalist" className="capitalize">
-                                                        {field.replace(/_/g, " ")}
+                                                        {typeof field === "string" ? field.replace(/_/g, " ") : ""}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Textarea
@@ -247,7 +247,7 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
                                         return (
                                             <FormItem>
                                                 <FormLabel variant="brutalist" className="capitalize">
-                                                    {field.replace(/_/g, " ")}
+                                                    {typeof field === "string" ? field.replace(/_/g, " ") : ""}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
