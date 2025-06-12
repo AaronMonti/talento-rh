@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { getTrabajosParaDashboard } from "@/app/actions/getTrabajos";
 import EmpleosClient from "./EmpleosClient";
 

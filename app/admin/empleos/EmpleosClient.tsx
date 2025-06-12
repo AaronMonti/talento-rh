@@ -27,21 +27,31 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
     const [sortAsc, setSortAsc] = useState(true);
 
     const handleDelete = async (id: string) => {
-        const { error } = await supabase
-            .from("trabajos")
-            .delete()
-            .eq("id", id);
+        try {
+            const { error } = await supabase
+                .from("trabajos")
+                .delete()
+                .eq("id", id);
 
-        if (error) {
-            toast.error("Error al borrar trabajo: " + error.message);
-        } else {
+            if (error) {
+                console.error('Error de Supabase:', error);
+                toast.error("Error al borrar trabajo: " + error.message);
+                return;
+            }
+
+            setTrabajos((prev) => {
+                const nuevosTrabajos = prev.filter((trabajo) => trabajo.id !== id);
+                return nuevosTrabajos;
+            });
+
             toast.success("Trabajo borrado correctamente");
-            setTrabajos((prev) => prev.filter((trabajo) => trabajo.id !== id));
+
+        } catch (error) {
+            toast.error("Error inesperado al borrar el trabajo: " + error);
         }
     };
 
 
-    // Función para manejar la creación de un nuevo trabajo
     const handleCreate = (nuevoTrabajo: Trabajo) => {
         setTrabajos((prev) => [...prev, nuevoTrabajo]);
         setSearchTerm("");
