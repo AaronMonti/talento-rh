@@ -8,16 +8,6 @@ import { getTrabajosActivos } from "../actions/getTrabajos";
 
 export default async function TrabajosPage() {
     const data = await getTrabajosActivos();
-    console.log("Datos de trabajos:", data);
-    /* if (error) {
-        return (
-            <div className="max-w-6xl mx-auto p-6">
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                    <p>No se pudieron cargar los trabajos: {error.message}</p>
-                </div>
-            </div>
-        );
-    } */
 
     if (!data || data.length === 0) {
         return (
@@ -48,9 +38,15 @@ export default async function TrabajosPage() {
                         <h1 className="text-4xl font-bold text-gray-800">Ofertas de empleo</h1>
                         <div className="w-20 h-1 bg-primary mt-2 rounded"></div>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-2 p-2 bg-fuchsia-50 rounded-md shadow-sm">
                         <CVUploadDialog />
+                        <span className="text-md font-semibold text-gray-800 tracking-wide">
+                            y sumate a nuestro banco de talentos!
+                        </span>
                     </div>
+
+
+
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {data.map((trabajo: Trabajo) => (
