@@ -3,16 +3,18 @@
 import { supabase } from "@/app/lib/supabase";
 import ResetPasswordForm from "./form";
 
-export default async function ResetPasswordPage({ searchParams }: { searchParams: { [key: string]: string } }) {
-    // Si ya hay usuario, todo OK
+interface Props {
+    searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default async function ResetPasswordPage({ searchParams }: Props) {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
         return <ResetPasswordForm />;
     }
 
-    // Si no hay usuario, intentamos establecer sesión
-    const accessToken = searchParams["access_token"];
-    const refreshToken = searchParams["refresh_token"];
+    const accessToken = searchParams.access_token;
+    const refreshToken = searchParams.refresh_token;
 
     if (!accessToken || !refreshToken) {
         return (
@@ -22,10 +24,9 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
         );
     }
 
-    // Establecer sesión temporal
     const { error } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
+        access_token: accessToken as string,
+        refresh_token: refreshToken as string,
     });
 
     if (error) {
