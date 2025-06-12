@@ -1,8 +1,6 @@
 "use client";
-export const dynamic = "force-dynamic";
 
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { supabase } from "../../lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -21,6 +19,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+
+// Configuración dinámica para evitar prerenderizado
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const resetPasswordSchema = z.object({
     password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
@@ -49,7 +51,7 @@ const loadingCircleTransition: Transition = {
     ease: "easeInOut",
 };
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [error, setError] = useState("");
@@ -57,6 +59,7 @@ export default function ResetPasswordPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isValidSession, setIsValidSession] = useState<boolean | null>(null);
+    const [mounted, setMounted] = useState(false);
 
     const form = useForm<ResetPasswordFormData>({
         resolver: zodResolver(resetPasswordSchema),
@@ -67,60 +70,76 @@ export default function ResetPasswordPage() {
     });
 
     useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (!mounted) return;
+
         const checkSession = async () => {
-            // Verificar si hay una sesión de reset válida
-            const { data } = await supabase.auth.getUser();
+            try {
+                // Verificar si hay una sesión de reset válida
+                const { data } = await supabase.auth.getUser();
 
-            if (data.user) {
-                setIsValidSession(true);
-            } else {
-                // Verificar parámetros de URL para token de reset
-                const accessToken = searchParams.get("access_token");
-                const refreshToken = searchParams.get("refresh_token");
-
-                if (accessToken && refreshToken) {
-                    // Establecer la sesión con los tokens
-                    const { error } = await supabase.auth.setSession({
-                        access_token: accessToken,
-                        refresh_token: refreshToken,
-                    });
-
-                    if (error) {
-                        console.error("Error al establecer sesión:", error);
-                        setIsValidSession(false);
-                    } else {
-                        setIsValidSession(true);
-                    }
+                if (data.user) {
+                    setIsValidSession(true);
                 } else {
-                    setIsValidSession(false);
+                    // Verificar parámetros de URL para token de reset
+                    const accessToken = searchParams.get("access_token");
+                    const refreshToken = searchParams.get("refresh_token");
+
+                    if (accessToken && refreshToken) {
+                        // Establecer la sesión con los tokens
+                        const { error } = await supabase.auth.setSession({
+                            access_token: accessToken,
+                            refresh_token: refreshToken,
+                        });
+
+                        if (error) {
+                            console.error("Error al establecer sesión:", error);
+                            setIsValidSession(false);
+                        } else {
+                            setIsValidSession(true);
+                        }
+                    } else {
+                        setIsValidSession(false);
+                    }
                 }
+            } catch (error) {
+                console.error("Error al verificar sesión:", error);
+                setIsValidSession(false);
             }
         };
 
         checkSession();
-    }, [searchParams]);
+    }, [searchParams, mounted]);
 
     const onSubmit = async (values: ResetPasswordFormData) => {
         setError("");
 
-        const { error } = await supabase.auth.updateUser({
-            password: values.password,
-        });
+        try {
+            const { error } = await supabase.auth.updateUser({
+                password: values.password,
+            });
 
-        if (error) {
-            setError("Error al actualizar la contraseña. Por favor intenta de nuevo.");
-            console.error("Error al actualizar contraseña:", error.message);
-        } else {
-            setSuccess(true);
-            // Cerrar sesión después de actualizar la contraseña
-            await supabase.auth.signOut();
-            setTimeout(() => {
-                router.push("/admin");
-            }, 3000);
+            if (error) {
+                setError("Error al actualizar la contraseña. Por favor intenta de nuevo.");
+                console.error("Error al actualizar contraseña:", error.message);
+            } else {
+                setSuccess(true);
+                // Cerrar sesión después de actualizar la contraseña
+                await supabase.auth.signOut();
+                setTimeout(() => {
+                    router.push("/admin");
+                }, 3000);
+            }
+        } catch (error) {
+            console.error("Error inesperado:", error);
+            setError("Error inesperado. Por favor intenta de nuevo.");
         }
     };
 
-    if (isValidSession === null) {
+    if (!mounted || isValidSession === null) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
                 <motion.div
@@ -317,5 +336,31 @@ export default function ResetPasswordPage() {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <motion.div
+                    className="flex gap-2"
+                    variants={loadingContainerVariants}
+                    initial="start"
+                    animate="end"
+                >
+                    {[...Array(3)].map((_, i) => (
+                        <motion.div
+                            key={i}
+                            className="w-4 h-4 rounded-full bg-primary"
+                            variants={loadingCircleVariants}
+                            transition={loadingCircleTransition}
+                        />
+                    ))}
+                </motion.div>
+            </div>
+        }>
+            <ResetPasswordContent />
+        </Suspense>
     );
 } 
