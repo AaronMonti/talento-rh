@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -22,7 +22,6 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 // Configuración dinámica para evitar prerenderizado
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 const resetPasswordSchema = z.object({
     password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
@@ -51,7 +50,7 @@ const loadingCircleTransition: Transition = {
     ease: "easeInOut",
 };
 
-function ResetPasswordContent() {
+export default function ResetPasswordPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [error, setError] = useState("");
@@ -139,7 +138,12 @@ function ResetPasswordContent() {
         }
     };
 
-    if (!mounted || isValidSession === null) {
+    // No renderizar nada hasta que el componente esté montado
+    if (!mounted) {
+        return null;
+    }
+
+    if (isValidSession === null) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
                 <motion.div
@@ -336,31 +340,5 @@ function ResetPasswordContent() {
                 </CardContent>
             </Card>
         </div>
-    );
-}
-
-export default function ResetPasswordPage() {
-    return (
-        <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-white">
-                <motion.div
-                    className="flex gap-2"
-                    variants={loadingContainerVariants}
-                    initial="start"
-                    animate="end"
-                >
-                    {[...Array(3)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="w-4 h-4 rounded-full bg-primary"
-                            variants={loadingCircleVariants}
-                            transition={loadingCircleTransition}
-                        />
-                    ))}
-                </motion.div>
-            </div>
-        }>
-            <ResetPasswordContent />
-        </Suspense>
     );
 } 
