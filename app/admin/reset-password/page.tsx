@@ -1,10 +1,8 @@
-// app/admin/reset-password/page.tsx
-
 import { supabase } from "@/app/lib/supabase";
 import ResetPasswordForm from "./form";
 
-interface Props {
-    searchParams: { [key: string]: string | string[] | undefined };
+type Props = {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function ResetPasswordPage({ searchParams }: Props) {
@@ -13,8 +11,10 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
         return <ResetPasswordForm />;
     }
 
-    const accessToken = searchParams.access_token;
-    const refreshToken = searchParams.refresh_token;
+    // Await the searchParams promise
+    const params = await searchParams;
+    const accessToken = params.access_token;
+    const refreshToken = params.refresh_token;
 
     if (!accessToken || !refreshToken) {
         return (
