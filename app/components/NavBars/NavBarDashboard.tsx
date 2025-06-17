@@ -16,6 +16,7 @@ import { supabase } from "@/app/lib/supabase";
 import * as Dialog from '@radix-ui/react-dialog';
 import { usePathname } from 'next/navigation';
 import { ThemeToggle } from "@/app/components/theme-toggle";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 
 const menuItems = [
@@ -262,7 +263,6 @@ const MobileOption = ({
 export const Sidebar = () => {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const handleLogout = async () => {
     try {
@@ -307,9 +307,6 @@ export const Sidebar = () => {
               open={open}
               path={item.path}
               color={item.color}
-              hovered={hoveredItem === item.title}
-              onHover={() => setHoveredItem(item.title)}
-              onHoverEnd={() => setHoveredItem(null)}
             />
           ))}
         </div>
@@ -407,10 +404,7 @@ const Option = ({
   selected,
   open,
   path,
-  color,
-  hovered,
-  onHover,
-  onHoverEnd
+  color
 }: {
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   title: string;
@@ -419,31 +413,43 @@ const Option = ({
   open: boolean;
   path: string;
   color: string;
-  hovered: boolean;
-  onHover: () => void;
-  onHoverEnd: () => void;
 }) => {
   const router = useRouter();
+  const { theme } = useTheme();
 
   const handleClick = () => {
     router.push(path);
+  };
+
+  // Función para obtener el backgroundColor apropiado basado en el tema
+  const getBackgroundColor = () => {
+    if (selected) {
+      return color;
+    }
+    // Para elementos no seleccionados, usar colores que se adapten al tema
+    return theme === 'dark' ? '#374151' : '#ffffff'; // gray-700 en dark, white en light
+  };
+
+  const getHoverBackgroundColor = () => {
+    if (selected) {
+      return color;
+    }
+    return `${color}30`; // 30% de opacidad del color para hover
   };
 
   return (
     <motion.button
       layout
       onClick={handleClick}
-      onMouseEnter={onHover}
-      onMouseLeave={onHoverEnd}
-      className={`relative text-left flex items-center gap-3 border-2 border-black dark:border-white transition-colors duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)]
-        ${selected ? "text-white" : "text-black dark:text-white bg-white dark:bg-gray-700"}
+      className={`relative text-left flex items-center gap-3 border-2 border-black dark:border-white transition-all duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)]
+        ${selected ? "text-white" : "text-black dark:text-white"}
         ${open ? "px-4 py-3 w-full" : "p-3 justify-center"}
       `}
       style={{
-        backgroundColor: selected ? color : hovered ? `${color}20` : undefined
+        backgroundColor: getBackgroundColor()
       }}
       whileHover={{
-        backgroundColor: selected ? color : `${color}30`,
+        backgroundColor: getHoverBackgroundColor(),
         transition: { duration: 0.2 }
       }}
       whileTap={{ scale: 0.98 }}

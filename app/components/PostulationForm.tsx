@@ -19,6 +19,16 @@ export default function PostulacionForm({ trabajoId }: Props) {
         setUploadError(null);
     };
 
+    const sanitizeFileName = (fileName: string) => {
+        // Remover caracteres especiales y reemplazar espacios con guiones
+        return fileName
+            .normalize('NFD') // Normalizar acentos
+            .replace(/[\u0300-\u036f]/g, '') // Remover diacríticos
+            .replace(/[^a-zA-Z0-9.-]/g, '-') // Reemplazar caracteres especiales con guiones
+            .replace(/-+/g, '-') // Reemplazar múltiples guiones con uno solo
+            .replace(/^-|-$/g, ''); // Remover guiones al inicio y final
+    };
+
     const handlePostular = async () => {
         if (!file) {
             setUploadError("Por favor, sube tu CV.");
@@ -27,7 +37,8 @@ export default function PostulacionForm({ trabajoId }: Props) {
 
         setIsSubmitting(true);
         try {
-            const filePath = `cv-${Date.now()}-${file.name}`;
+            const sanitizedFileName = sanitizeFileName(file.name);
+            const filePath = `cv-${Date.now()}-${sanitizedFileName}`;
             const { error: uploadError } = await supabase.storage
                 .from("cvs")
                 .upload(filePath, file);
