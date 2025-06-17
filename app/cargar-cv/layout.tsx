@@ -1,8 +1,34 @@
 // app/empleos/layout.tsx
 import { ReactNode } from "react";
 import Header from "@/app/components/NavBars/header"
+import { Metadata } from "next";
 
-export default function EmpleosLayout({ children }: { children: ReactNode }) {
+export const metadata: Metadata = {
+    title: "Enviar CV - Únete a Nuestro Banco de Talentos",
+    description: "Sube tu currículum vitae y forma parte de nuestro banco de talentos especializado en perfiles industriales. Conectamos profesionales con las mejores oportunidades laborales.",
+    keywords: [
+        "enviar cv",
+        "subir curriculum",
+        "banco de talentos",
+        "busco trabajo",
+        "cv online",
+        "postulación empleo",
+        "curriculum vitae",
+        "talento industrial",
+        "oportunidades laborales"
+    ],
+    openGraph: {
+        title: "Enviar CV - Únete a Nuestro Banco de Talentos | Talento Positivo RH",
+        description: "Sube tu currículum vitae y forma parte de nuestro banco de talentos especializado en perfiles industriales.",
+        type: "website",
+        url: "https://talentopositivorh.com/cargar-cv",
+    },
+    alternates: {
+        canonical: "https://talentopositivorh.com/cargar-cv",
+    },
+};
+
+export default function CargarCVLayout({ children }: { children: ReactNode }) {
     return (
         <div className="min-h-screen">
             <Header />

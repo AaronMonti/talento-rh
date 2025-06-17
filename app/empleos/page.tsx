@@ -5,6 +5,33 @@ import Link from "next/link";
 import CVUploadDialog from "../components/CVUploadDialog";
 import { Trabajo } from "@/types";
 import { getTrabajosActivos } from "../actions/getTrabajos";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Ofertas de Empleo Industriales - Trabajos Disponibles",
+    description: "Descubre las mejores oportunidades laborales en perfiles industriales. Ofertas de empleo actualizadas diariamente con empresas PYMES, nacionales y multinacionales. Encuentra tu próximo trabajo.",
+    keywords: [
+        "ofertas de empleo",
+        "trabajos industriales",
+        "empleos Argentina",
+        "vacantes industriales",
+        "búsqueda de empleo",
+        "trabajos presenciales",
+        "empleos remotos",
+        "empleos híbridos",
+        "oportunidades laborales",
+        "recursos humanos"
+    ],
+    openGraph: {
+        title: "Ofertas de Empleo Industriales - Trabajos Disponibles | Talento Positivo RH",
+        description: "Descubre las mejores oportunidades laborales en perfiles industriales. Ofertas actualizadas diariamente.",
+        type: "website",
+        url: "https://talentopositivorh.com/empleos",
+    },
+    alternates: {
+        canonical: "https://talentopositivorh.com/empleos",
+    },
+};
 
 export default async function TrabajosPage() {
     const data = await getTrabajosActivos();
