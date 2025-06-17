@@ -56,7 +56,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-white pt-20 md:pt-0">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 md:pt-0 transition-colors duration-300">
       <div className="flex">
         {isAuthenticated && <Sidebar />}
         <div className={`flex-1 ${isAuthenticated ? "p-4" : ""}`}>

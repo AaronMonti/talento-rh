@@ -213,7 +213,7 @@ export default function AdminPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowPassword((prev) => !prev)}
-                                                        className="absolute inset-y-0 right-0 px-3 flex items-center text-black hover:text-primary font-bold border-l-2 border-black bg-gray-100 hover:bg-gray-200 transition-colors"
+                                                        className="absolute inset-y-0 right-0 px-3 flex items-center text-black dark:text-white hover:text-primary dark:hover:text-purple-400 font-bold border-l-2 border-black dark:border-white bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                                                         tabIndex={-1}
                                                     >
                                                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -284,7 +284,7 @@ export default function AdminPage() {
                         <Form {...resetForm} key="reset-form">
                             <form onSubmit={resetForm.handleSubmit(onResetSubmit)} className="space-y-6">
                                 <div className="text-center mb-4">
-                                    <p className="text-gray-600 text-sm">
+                                    <p className="text-gray-600 dark:text-gray-300 text-sm">
                                         Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.
                                     </p>
                                 </div>
@@ -359,11 +359,11 @@ export default function AdminPage() {
                 </CardContent>
                 {!isResetMode && (
                     <CardFooter className="text-center border-t-2 border-black pt-4">
-                        <p className="text-sm font-bold text-gray-600 w-full">
+                        <p className="text-sm font-bold text-gray-600 dark:text-gray-300 w-full">
                             ¿Olvidaste tu contraseña?{" "}
                             <button
                                 onClick={handleShowResetMode}
-                                className="text-primary hover:underline font-black uppercase"
+                                className="text-primary dark:text-purple-400 hover:underline font-black uppercase"
                             >
                                 Recuperar
                             </button>

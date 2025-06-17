@@ -12,7 +12,7 @@ const labelVariants = cva(
     variants: {
       variant: {
         default: "",
-        brutalist: "font-black uppercase tracking-wide text-black",
+        brutalist: "font-black uppercase tracking-wide text-black dark:text-white",
       },
     },
     defaultVariants: {

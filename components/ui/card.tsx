@@ -15,7 +15,7 @@ function Card({ className, variant = "default", ...props }: CardProps) {
         "flex flex-col gap-6 py-6", // base structure
         variant === "default" && "bg-card text-card-foreground rounded-xl border shadow-sm",
         variant === "neubrutalist" &&
-          "bg-white text-black border-[2px] border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] rounded-none",
+        "bg-white dark:bg-gray-800 text-black dark:text-white border-[2px] border-black dark:border-white shadow-[3px_3px_0_0_rgba(0,0,0,1)] dark:shadow-[3px_3px_0_0_rgba(255,255,255,0.8)] rounded-none transition-colors duration-300",
         className
       )}
       {...props}

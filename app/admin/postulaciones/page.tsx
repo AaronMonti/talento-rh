@@ -263,7 +263,7 @@ export default function Postulaciones() {
                 return (
                     <Card key={p.id} variant="neubrutalist">
                         <CardHeader>
-                            <CardTitle className="text-xl font-black uppercase tracking-wide text-black">
+                            <CardTitle className="text-xl font-black uppercase tracking-wide text-black dark:text-white">
                                 {nombreCV}
                             </CardTitle>
                         </CardHeader>

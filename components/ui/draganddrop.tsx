@@ -44,7 +44,7 @@ export default function CVDropzone({ onFileDrop, file, error }: Props) {
                         <p className="text-green-700">{file.name}</p>
                     </div>
                 ) : (
-                    <p className="text-gray-600">Arrastra y suelta tu CV aquí o haz clic para seleccionar un PDF</p>
+                    <p className="text-gray-600 dark:text-gray-300">Arrastra y suelta tu CV aquí o haz clic para seleccionar un PDF</p>
                 )}
             </Card>
             {error && <p className="text-sm text-red-600">{error}</p>}

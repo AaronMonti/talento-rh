@@ -31,7 +31,7 @@ const SelectTrigger = React.forwardRef<
 
       // Brutalist variant
       variant === "brutalist" && [
-        "border-[3px] border-black bg-white rounded-none focus:ring-0 focus:border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold text-black"
+        "border-[3px] border-black dark:border-white bg-white dark:bg-gray-800 rounded-none focus:ring-0 focus:border-black dark:focus:border-white focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:focus:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] font-bold text-black dark:text-white transition-colors duration-300"
       ],
 
       className
@@ -101,7 +101,7 @@ const SelectContent = React.forwardRef<
 
         // Brutalist variant
         variant === "brutalist" && [
-          "bg-white text-black border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+          "bg-white dark:bg-gray-800 text-black dark:text-white border-[3px] border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] transition-colors duration-300"
         ],
 
         position === "popper" &&
@@ -138,7 +138,7 @@ const SelectLabel = React.forwardRef<
     className={cn(
       "py-1.5 pl-8 pr-2 text-sm",
       variant === "default" && "font-semibold",
-      variant === "brutalist" && "font-black uppercase text-black",
+      variant === "brutalist" && "font-black uppercase text-black dark:text-white",
       className
     )}
     {...props}
@@ -165,7 +165,7 @@ const SelectItem = React.forwardRef<
 
       // Brutalist variant  
       variant === "brutalist" && [
-        "focus:bg-black focus:text-white font-bold text-black hover:bg-gray-100"
+        "focus:bg-black dark:focus:bg-white focus:text-white dark:focus:text-black font-bold text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
       ],
 
       className
@@ -194,7 +194,7 @@ const SelectSeparator = React.forwardRef<
     className={cn(
       "-mx-1 my-1 h-px",
       variant === "default" && "bg-muted",
-      variant === "brutalist" && "bg-black h-[2px]",
+      variant === "brutalist" && "bg-black dark:bg-white h-[2px]",
       className
     )}
     {...props}

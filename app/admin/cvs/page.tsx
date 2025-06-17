@@ -52,6 +52,36 @@ export default function Candidatos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortAsc, setSortAsc] = useState(true);
 
+  async function handleDownloadCv(path: string, fileName: string) {
+    try {
+      const { data, error } = await supabase.storage
+        .from("cvs")
+        .download(path);
+
+      if (error) {
+        console.error("Error descargando archivo:", error);
+        toast.error("Error al descargar el archivo.");
+        return;
+      }
+
+      if (data) {
+        const url = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Error en descarga:", error);
+      toast.error("Error al descargar el archivo.");
+    }
+  }
+
   useEffect(() => {
     async function fetchCandidatos() {
       const { data, error } = await supabase
@@ -166,7 +196,7 @@ export default function Candidatos() {
         return (
           <Card key={c.id} variant="neubrutalist">
             <CardHeader>
-              <CardTitle className="text-xl font-black uppercase tracking-wide text-black">
+              <CardTitle className="text-xl font-black uppercase tracking-wide text-black dark:text-white">
                 {c.nombre_apellido}
               </CardTitle>
             </CardHeader>
@@ -207,7 +237,7 @@ export default function Candidatos() {
 
                     <Button
                       variant="brutalist"
-                      onClick={() => window.open(c.cv_url!, "_blank")}
+                      onClick={() => handleDownloadCv(c.cv_storage_path, c.nombre_apellido)}
                       className="flex items-center font-bold uppercase bg-[#dd63ff] hover:bg-[#bd13ec] text-white"
                     >
                       <Download className="w-4 h-4 mr-1" /> Descargar

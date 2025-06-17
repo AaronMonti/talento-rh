@@ -37,7 +37,7 @@ const formSchema = z.object({
     conocimientos_tecnicos: z.string(),
     jornada_laboral: z.string(),
     ubicacion: z.string(),
-    modalidad: z.string(),
+    modalidad: z.enum(["Presencial", "Remoto", "Híbrido"]),
     rango_salarial: z.object({
         desde: z.string().optional(),
         hasta: z.string().optional(),
@@ -91,7 +91,7 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
             conocimientos_tecnicos: trabajo?.conocimientos_tecnicos ?? "",
             jornada_laboral: trabajo?.jornada_laboral ?? "",
             ubicacion: trabajo?.ubicacion ?? "",
-            modalidad: trabajo?.modalidad ?? "",
+            modalidad: (trabajo?.modalidad as "Presencial" | "Remoto" | "Híbrido") ?? "Presencial",
             rango_salarial: defaultRango,
             descripcion: trabajo?.descripcion ?? "",
             activo: trabajo?.activo ?? true,
@@ -108,56 +108,96 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
         }
 
         const payload = {
-            ...data,
+            titulo_vacante: data.titulo_vacante,
+            empresa: data.empresa,
+            rubro: data.rubro,
+            formacion: data.formacion,
+            conocimientos_tecnicos: data.conocimientos_tecnicos,
+            jornada_laboral: data.jornada_laboral,
+            ubicacion: data.ubicacion,
+            modalidad: data.modalidad,
             rango_salarial: rango,
+            descripcion: data.descripcion,
+            activo: data.activo,
         };
 
         if (mode === "edit" && trabajo?.id) {
-            // Actualizar
-            const { data: updatedData, error } = await supabase
+            // Primero verificamos si el trabajo existe y obtenemos los datos actuales
+            const { data: existingTrabajo, error: fetchError } = await supabase
+                .from("trabajos")
+                .select("*")
+                .eq("id", trabajo.id)
+                .maybeSingle();
+
+            if (fetchError) {
+                toast.error("Error al buscar el trabajo: " + fetchError.message);
+                return;
+            }
+
+            if (!existingTrabajo) {
+                toast.error("No se encontró el trabajo para actualizar");
+                return;
+            }
+
+            const updateResult = await supabase
                 .from("trabajos")
                 .update(payload)
+                .eq("id", trabajo.id);
+
+            if (updateResult.error) {
+                toast.error("Error al actualizar trabajo: " + updateResult.error.message);
+                return;
+            }
+
+            // Ahora verificamos si realmente cambió en la base de datos
+            const { data: updatedData, error: selectError } = await supabase
+                .from("trabajos")
+                .select("*")
                 .eq("id", trabajo.id)
-                .select() // Importante: obtener los datos actualizados
-                .single();
+                .maybeSingle();
 
-            if (error) {
-                console.error("Error al actualizar:", error.message);
-                toast.error("Error al actualizar trabajo: " + error.message);
-            } else {
-                console.log("Trabajo actualizado");
-                toast.success("Trabajo actualizado correctamente");
-
-                // Llamar al callback para actualizar el estado en el componente padre
-                if (onUpdate && updatedData) {
-                    onUpdate(updatedData as Trabajo);
-                }
-
+            if (selectError) {
+                toast.error("Trabajo actualizado pero error al obtener datos: " + selectError.message);
                 setEditMode(false);
                 setOpen(false);
+                return;
             }
+
+            if (!updatedData) {
+                toast.error("Trabajo actualizado pero no se pudieron obtener los datos");
+                setEditMode(false);
+                setOpen(false);
+                return;
+            }
+
+
+            toast.success("Trabajo actualizado correctamente");
+
+            if (onUpdate) {
+                onUpdate(updatedData as Trabajo);
+            }
+
+            setEditMode(false);
+            setOpen(false);
         } else {
-            // Crear nuevo
+            // Crear nuevo (sin cambios)
             const { data: newData, error } = await supabase
                 .from("trabajos")
                 .insert([payload])
-                .select() // Importante: obtener los datos del nuevo registro
+                .select()
                 .single();
 
             if (error) {
-                console.error("Error al crear:", error.message);
                 toast.error("Error al crear trabajo: " + error.message);
             } else {
-                console.log("Trabajo creado");
                 toast.success("Trabajo creado correctamente");
 
-                // Llamar al callback para agregar el nuevo trabajo al estado
                 if (onCreate && newData) {
                     onCreate(newData as Trabajo);
                 }
 
                 setOpen(false);
-                form.reset(); // Limpiar el formulario después de crear
+                form.reset();
             }
         }
     }
@@ -212,7 +252,7 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
                         />
 
                         {Object.keys(formSchema.shape)
-                            .filter((field) => field !== "rango_salarial" && field !== "activo")
+                            .filter((field) => field !== "rango_salarial" && field !== "activo" && field !== "modalidad")
                             .map((field) => (
                                 <FormField
                                     key={field}
@@ -266,6 +306,33 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
                                     }}
                                 />
                             ))}
+
+                        {/* Campo de Modalidad con Select */}
+                        <FormField
+                            control={form.control}
+                            name="modalidad"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel variant="brutalist">Modalidad</FormLabel>
+                                    <FormControl>
+                                        <Select
+                                            value={field.value}
+                                            onValueChange={field.onChange}
+                                            disabled={mode === "edit" ? !editMode : false}
+                                        >
+                                            <SelectTrigger className="w-full" variant="brutalist">
+                                                <SelectValue placeholder="Seleccionar modalidad" />
+                                            </SelectTrigger>
+                                            <SelectContent variant="brutalist">
+                                                <SelectItem value="Presencial" variant="brutalist">Presencial</SelectItem>
+                                                <SelectItem value="Remoto" variant="brutalist">Remoto</SelectItem>
+                                                <SelectItem value="Híbrido" variant="brutalist">Híbrido</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
 
                         <div className="flex gap-4">
                             <FormField

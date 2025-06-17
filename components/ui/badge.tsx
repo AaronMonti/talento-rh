@@ -18,7 +18,7 @@ const badgeVariants = cva(
         outline:
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         brutalist:
-          "border-[2px] border-black bg-yellow-300 text-black font-black uppercase tracking-wide rounded-none px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100",
+          "border-[2px] border-black dark:border-white bg-yellow-300 dark:bg-purple-600 text-black dark:text-white font-black uppercase tracking-wide rounded-none px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.8)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.8)] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all duration-100",
       },
     },
     defaultVariants: {

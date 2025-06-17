@@ -3,7 +3,7 @@
 import { Trabajo } from "@/types";
 import TrabajoDialog from "@/app/components/Jobs/TrabajoDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, DollarSign, Trash2 } from "lucide-react";
+import { MapPin, Calendar, DollarSign, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/app/lib/supabase";
 import { toast } from "sonner";
@@ -25,6 +25,21 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
     const [trabajos, setTrabajos] = useState<Trabajo[]>(initialTrabajos);
     const [searchTerm, setSearchTerm] = useState("");
     const [sortAsc, setSortAsc] = useState(true);
+    const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
+
+    const MAX_DESCRIPTION_LENGTH = 150;
+
+    const toggleDescription = (trabajoId: string) => {
+        setExpandedDescriptions(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(trabajoId)) {
+                newSet.delete(trabajoId);
+            } else {
+                newSet.add(trabajoId);
+            }
+            return newSet;
+        });
+    };
 
     const handleDelete = async (id: string) => {
         try {
@@ -50,7 +65,6 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
             toast.error("Error inesperado al borrar el trabajo: " + error);
         }
     };
-
 
     const handleCreate = (nuevoTrabajo: Trabajo) => {
         setTrabajos((prev) => [...prev, nuevoTrabajo]);
@@ -100,7 +114,7 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
 
             {(!trabajos || trabajos.length === 0) ? (
                 <Card variant="neubrutalist" className="!p-6">
-                    <p className="text-center font-bold text-lg text-gray-600">
+                    <p className="text-center font-bold text-lg text-gray-600 dark:text-gray-300">
                         No hay ofertas de empleo disponibles en este momento.
                     </p>
                     <div className="flex justify-center mt-4">
@@ -130,89 +144,114 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                     </Card>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredTrabajos.map((trabajo) => (
-                            <Card key={trabajo.id} variant="neubrutalist">
-                                <CardHeader>
-                                    <CardTitle className="text-xl font-black uppercase tracking-wide text-black">
-                                        {trabajo.titulo_vacante}
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    <div className="flex items-center gap-2 font-bold">
-                                        <MapPin className="w-4 h-4 text-primary" />
-                                        <span className="text-sm">{trabajo.ubicacion}</span>
-                                    </div>
+                        {filteredTrabajos.map((trabajo) => {
+                            const isExpanded = expandedDescriptions.has(trabajo.id);
+                            const shouldShowToggle = trabajo.descripcion && trabajo.descripcion.length > MAX_DESCRIPTION_LENGTH;
+                            const displayDescription = shouldShowToggle && !isExpanded
+                                ? trabajo.descripcion.substring(0, MAX_DESCRIPTION_LENGTH) + "..."
+                                : trabajo.descripcion;
 
-                                    <div className="flex items-center gap-2 font-bold">
-                                        <Calendar className="w-4 h-4 text-primary" />
-                                        <span className="text-sm">
-                                            Publicado: {new Date(trabajo.fecha_publicacion).toLocaleDateString('es-AR')}
-                                        </span>
-                                    </div>
-
-                                    {trabajo.rango_salarial && (
+                            return (
+                                <Card key={trabajo.id} variant="neubrutalist">
+                                    <CardHeader>
+                                        <CardTitle className="text-xl font-black uppercase tracking-wide text-black dark:text-white">
+                                            {trabajo.titulo_vacante}
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-3">
                                         <div className="flex items-center gap-2 font-bold">
-                                            <DollarSign className="w-4 h-4 text-primary" />
-                                            <span className="text-sm">{trabajo.rango_salarial}</span>
+                                            <MapPin className="w-4 h-4 text-primary" />
+                                            <span className="text-sm">{trabajo.ubicacion}</span>
                                         </div>
-                                    )}
 
-                                    <div className="bg-gray-100 p-3 border-2 border-black">
-                                        <p className="text-sm font-bold text-gray-700 line-clamp-3">
-                                            {trabajo.descripcion}
-                                        </p>
-                                    </div>
+                                        <div className="flex items-center gap-2 font-bold">
+                                            <Calendar className="w-4 h-4 text-primary" />
+                                            <span className="text-sm">
+                                                Publicado: {new Date(trabajo.fecha_publicacion).toLocaleDateString('es-AR')}
+                                            </span>
+                                        </div>
 
-                                    <div className="flex justify-between items-center pt-2 gap-2">
-                                        <span className={`px-3 py-1 text-xs font-black uppercase border-2 border-black ${trabajo.activo
-                                            ? 'bg-green-300 text-green-800'
-                                            : 'bg-red-300 text-red-800'
-                                            }`}>
-                                            {trabajo.activo ? 'Activo' : 'Inactivo'}
-                                        </span>
+                                        {trabajo.rango_salarial && (
+                                            <div className="flex items-center gap-2 font-bold">
+                                                <DollarSign className="w-4 h-4 text-primary" />
+                                                <span className="text-sm">{trabajo.rango_salarial}</span>
+                                            </div>
+                                        )}
 
-                                        <div className="flex gap-2">
-                                            <TrabajoDialog
-                                                trabajo={trabajo}
-                                                mode="edit"
-                                                onUpdate={handleUpdate}
-                                            />
+                                        <div className="bg-gray-100 p-3 border-2 border-black dark:bg-gray-800 dark:border-white">
+                                            <p className="text-sm font-bold text-gray-700 dark:text-gray-300 break-words whitespace-normal">
+                                                {displayDescription}
+                                            </p>
 
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button
-                                                        variant="brutalist"
-                                                        size="sm"
-                                                        className="rounded-none flex items-center gap-1 bg-[#ff97d9] hover:bg-[#e44f9c] text-black"
-                                                    >
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent variant="neubrutalist">
-                                                    <AlertDialogHeader variant="neubrutalist">
-                                                        <AlertDialogTitle variant="neubrutalist">
-                                                            ¿Estás seguro que deseas borrar este trabajo?
-                                                        </AlertDialogTitle>
-                                                        <AlertDialogDescription variant="neubrutalist">
-                                                            Esta acción no se puede deshacer. El trabajo se eliminará permanentemente junto con todas sus postulaciones asociadas.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter variant="neubrutalist">
-                                                        <AlertDialogCancel variant="neubrutalist">Cancelar</AlertDialogCancel>
-                                                        <AlertDialogAction
-                                                            variant="neubrutalist"
-                                                            onClick={() => handleDelete(trabajo.id)}
+                                            {shouldShowToggle && (
+                                                <button
+                                                    onClick={() => toggleDescription(trabajo.id)}
+                                                    className="flex items-center gap-1 mt-2 text-xs font-bold text-primary hover:text-primary/80 transition-colors"
+                                                >
+                                                    {isExpanded ? (
+                                                        <>
+                                                            Ver menos <ChevronUp className="w-3 h-3" />
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            Ver más <ChevronDown className="w-3 h-3" />
+                                                        </>
+                                                    )}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        <div className="flex justify-between items-center pt-2 gap-2">
+                                            <span className={`px-3 py-1 text-xs font-black uppercase border-2 border-black ${trabajo.activo
+                                                ? 'bg-green-300 text-green-800'
+                                                : 'bg-red-300 text-red-800'
+                                                }`}>
+                                                {trabajo.activo ? 'Activo' : 'Inactivo'}
+                                            </span>
+
+                                            <div className="flex gap-2">
+                                                <TrabajoDialog
+                                                    trabajo={trabajo}
+                                                    mode="edit"
+                                                    onUpdate={handleUpdate}
+                                                />
+
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button
+                                                            variant="brutalist"
+                                                            size="sm"
+                                                            className="rounded-none flex items-center gap-1 bg-[#ff97d9] hover:bg-[#e44f9c] text-black"
                                                         >
-                                                            Borrar
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
+                                                            <Trash2 className="w-3 h-3" />
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent variant="neubrutalist">
+                                                        <AlertDialogHeader variant="neubrutalist">
+                                                            <AlertDialogTitle variant="neubrutalist">
+                                                                ¿Estás seguro que deseas borrar este trabajo?
+                                                            </AlertDialogTitle>
+                                                            <AlertDialogDescription variant="neubrutalist">
+                                                                Esta acción no se puede deshacer. El trabajo se eliminará permanentemente junto con todas sus postulaciones asociadas.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter variant="neubrutalist">
+                                                            <AlertDialogCancel variant="neubrutalist">Cancelar</AlertDialogCancel>
+                                                            <AlertDialogAction
+                                                                variant="neubrutalist"
+                                                                onClick={() => handleDelete(trabajo.id)}
+                                                            >
+                                                                Borrar
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
                     </div>
                 </>
             )}

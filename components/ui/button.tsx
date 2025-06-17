@@ -21,7 +21,7 @@ const buttonVariants = cva(
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         brutalist:
-  "bg-yellow-300 text-black border-[3px] border-black rounded-none font-bold uppercase tracking-wide shadow-[4px_4px_0px_black] transform transition-all duration-150 ease-in-out hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none",
+          "bg-yellow-300 text-black border-[3px] border-black rounded-none font-bold uppercase tracking-wide shadow-[4px_4px_0px_black] transform transition-all duration-150 ease-in-out hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none dark:bg-purple-600 dark:text-white dark:border-white dark:shadow-[4px_4px_0px_white]",
 
       },
       size: {

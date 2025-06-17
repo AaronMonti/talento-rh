@@ -124,6 +124,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --neubrutal-shadow-dark: 8px 8px 0px 0px rgba(255,255,255,0.8);
 }
 
 @layer base {
@@ -157,6 +158,164 @@
   box-shadow: var(--neubrutal-shadow);
 }
 
+.dark .neubrutal-panel {
+  background-color: #1a1a1a;
+  box-shadow: var(--neubrutal-shadow-dark);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
 .shadow-neubrutal {
   box-shadow: var(--neubrutal-shadow);
+}
+
+.dark .shadow-neubrutal {
+  box-shadow: var(--neubrutal-shadow-dark);
+}
+
+.neubrutal-button-dark {
+  @apply border-2 border-white font-bold uppercase tracking-wide px-4 py-2;
+  box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.8);
+  transition: all 0.1s ease;
+}
+
+.neubrutal-button-dark:hover, 
+.neubrutal-button-dark:focus {
+  box-shadow: 2px 2px 0px 0px rgba(255,255,255,0.8);
+  transform: translate(2px, 2px);
+}
+
+.dark .neubrutal-card {
+  @apply bg-gray-800 border-2 border-white/20;
+  box-shadow: 6px 6px 0px 0px rgba(255,255,255,0.1);
+}
+
+.dark .neubrutal-card:hover {
+  box-shadow: 3px 3px 0px 0px rgba(255,255,255,0.1);
+  transform: translate(3px, 3px);
+}
+
+/* Estilos Neubrutalist para Toast */
+.neubrutalist-toast [data-sonner-toaster] {
+  --width: 356px;
+  --font-size: 13px;
+  --normal-bg: #ffffff;
+  --normal-border: #000000;
+  --normal-text: #000000;
+  --error-bg: #ef4444;
+  --error-border: #000000;
+  --error-text: #ffffff;
+  --success-bg: #22c55e;
+  --success-border: #000000;
+  --success-text: #ffffff;
+  --warning-bg: #f59e0b;
+  --warning-border: #000000;
+  --warning-text: #000000;
+  --info-bg: #3b82f6;
+  --info-border: #000000;
+  --info-text: #ffffff;
+}
+
+.neubrutalist-toast [data-sonner-toast] {
+  background: var(--normal-bg);
+  border: 3px solid var(--normal-border);
+  color: var(--normal-text);
+  border-radius: 0;
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  font-weight: bold;
+  font-family: inherit;
+  margin-bottom: 8px;
+  transform: none;
+  animation: none;
+}
+
+.neubrutalist-toast [data-sonner-toast][data-type="success"] {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success-text);
+}
+
+.neubrutalist-toast [data-sonner-toast][data-type="error"] {
+  background: var(--error-bg);
+  border-color: var(--error-border);
+  color: var(--error-text);
+}
+
+.neubrutalist-toast [data-sonner-toast][data-type="warning"] {
+  background: var(--warning-bg);
+  border-color: var(--warning-border);
+  color: var(--warning-text);
+}
+
+.neubrutalist-toast [data-sonner-toast][data-type="info"] {
+  background: var(--info-bg);
+  border-color: var(--info-border);
+  color: var(--info-text);
+}
+
+.neubrutalist-toast [data-title] {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 14px;
+}
+
+.neubrutalist-toast [data-description] {
+  font-weight: 600;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.neubrutalist-toast [data-close-button] {
+  background: #ffffff;
+  border: 2px solid #000000;
+  color: #000000;
+  font-weight: bold;
+  border-radius: 0;
+  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  width: 20px;
+  height: 20px;
+  top: 8px;
+  right: 8px;
+}
+
+.neubrutalist-toast [data-close-button]:hover {
+  background: #f5f5f5;
+  box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
+  transform: translate(1px, 1px);
+}
+
+/* Estilos dark mode para toast neubrutalist */
+.dark .neubrutalist-toast [data-sonner-toaster] {
+  --normal-bg: #1f2937;
+  --normal-border: #ffffff;
+  --normal-text: #ffffff;
+  --error-bg: #dc2626;
+  --error-border: #ffffff;
+  --error-text: #ffffff;
+  --success-bg: #16a34a;
+  --success-border: #ffffff;
+  --success-text: #ffffff;
+  --warning-bg: #d97706;
+  --warning-border: #ffffff;
+  --warning-text: #ffffff;
+  --info-bg: #2563eb;
+  --info-border: #ffffff;
+  --info-text: #ffffff;
+}
+
+.dark .neubrutalist-toast [data-sonner-toast] {
+  box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.8);
+}
+
+.dark .neubrutalist-toast [data-close-button] {
+  background: #1f2937;
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: 2px 2px 0px 0px rgba(255, 255, 255, 0.8);
+}
+
+.dark .neubrutalist-toast [data-close-button]:hover {
+  background: #374151;
+  box-shadow: 1px 1px 0px 0px rgba(255, 255, 255, 0.8);
+  transform: translate(1px, 1px);
 }

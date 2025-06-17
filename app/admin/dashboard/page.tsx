@@ -170,7 +170,7 @@ export default async function Dashboard() {
                         <Card variant="neubrutalist" key={stat.title} className="!p-6">
                             <div className="flex items-center justify-between">
                                 <div className="flex-1">
-                                    <p className="text-sm font-bold text-gray-600 uppercase tracking-wide">
+                                    <p className="text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">
                                         {stat.title}
                                     </p>
                                     <p className="text-3xl font-black mt-2 text-primary">
@@ -181,11 +181,11 @@ export default async function Dashboard() {
                                             ? 'text-green-600'
                                             : stat.changeType === 'negative'
                                                 ? 'text-red-600'
-                                                : 'text-gray-600'
+                                                : 'text-gray-600 dark:text-gray-400'
                                             }`}>
                                             {stat.change} vs mes anterior
                                         </p>
-                                        <p className="text-xs text-gray-500">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
                                             {formatNumber(stat.previousValue)} el mes pasado
                                         </p>
                                     </div>
@@ -207,7 +207,7 @@ export default async function Dashboard() {
                     </h3>
                     <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium text-gray-600">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                                 Nuevos empleos publicados:
                             </span>
                             <span className="font-bold text-primary">
@@ -215,7 +215,7 @@ export default async function Dashboard() {
                             </span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium text-gray-600">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                                 Postulaciones recibidas:
                             </span>
                             <span className="font-bold text-primary">
@@ -223,7 +223,7 @@ export default async function Dashboard() {
                             </span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium text-gray-600">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                                 CVs nuevos registrados:
                             </span>
                             <span className="font-bold text-primary">
@@ -243,8 +243,8 @@ export default async function Dashboard() {
                             return (
                                 <div key={stat.title} className="flex justify-between items-center">
                                     <div className="flex items-center gap-2">
-                                        <IconComponent className="h-4 w-4 text-gray-500" />
-                                        <span className="text-sm font-medium text-gray-600">
+                                        <IconComponent className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                                             {stat.title}:
                                         </span>
                                     </div>
@@ -252,7 +252,7 @@ export default async function Dashboard() {
                                         ? 'text-green-600'
                                         : stat.changeType === 'negative'
                                             ? 'text-red-600'
-                                            : 'text-gray-600'
+                                            : 'text-gray-600 dark:text-gray-400'
                                         }`}>
                                         {stat.change}
                                     </span>

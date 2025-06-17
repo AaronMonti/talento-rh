@@ -54,7 +54,7 @@ const DialogContent = React.forwardRef<
 
         // Brutalist variant
         variant === "brutalist" && [
-          "bg-white border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+          "bg-white dark:bg-gray-800 text-black dark:text-white border-[4px] border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.8)] transition-colors duration-300"
         ],
 
         className
@@ -64,7 +64,7 @@ const DialogContent = React.forwardRef<
       {children}
       <DialogPrimitive.Close className={cn(
         "absolute right-4 top-4 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground",
-        variant === "brutalist" && "bg-red-500 hover:bg-red-600 text-white p-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] focus:ring-0"
+        variant === "brutalist" && "bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700 text-white p-1 border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,0.8)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.8)] focus:ring-0 transition-colors duration-300"
       )}>
         <X className="h-4 w-4" />
         <span className="sr-only">Cerrar</span>
@@ -84,7 +84,7 @@ const DialogHeader = ({
   <div
     className={cn(
       "flex flex-col space-y-1.5 text-center sm:text-left",
-      variant === "brutalist" && "border-b-2 border-black pb-3 mb-3",
+      variant === "brutalist" && "border-b-2 border-black dark:border-white pb-3 mb-3",
       className
     )}
     {...props}
@@ -102,7 +102,7 @@ const DialogFooter = ({
   <div
     className={cn(
       "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      variant === "brutalist" && "border-t-2 border-black pt-3 mt-3 justify-center",
+      variant === "brutalist" && "border-t-2 border-black dark:border-white pt-3 mt-3 justify-center",
       className
     )}
     {...props}
@@ -120,7 +120,7 @@ const DialogTitle = React.forwardRef<
     ref={ref}
     className={cn(
       variant === "default" && "text-lg font-semibold leading-none tracking-tight",
-      variant === "brutalist" && "text-xl font-black uppercase tracking-wide text-black",
+      variant === "brutalist" && "text-xl font-black uppercase tracking-wide text-black dark:text-white",
       className
     )}
     {...props}
@@ -138,7 +138,7 @@ const DialogDescription = React.forwardRef<
     ref={ref}
     className={cn(
       variant === "default" && "text-sm text-muted-foreground",
-      variant === "brutalist" && "text-base font-bold text-black leading-relaxed",
+      variant === "brutalist" && "text-base font-bold text-black dark:text-gray-300 leading-relaxed",
       className
     )}
     {...props}
