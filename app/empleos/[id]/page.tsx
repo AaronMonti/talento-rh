@@ -157,7 +157,7 @@ export default async function TrabajoDetallePage({
                 }}
             />
 
-            <div className="max-w-3xl mx-auto p-6 space-y-6">
+            <div className="max-w-3xl mx-auto p-6 space-y-6 pb-20">
                 <Button asChild variant="link">
                     <Link
                         href="/empleos"

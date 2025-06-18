@@ -2,6 +2,7 @@
 
 import { Trabajo } from "@/types";
 import TrabajoDialog from "@/app/components/Jobs/TrabajoDialog";
+import LinkedInExportDialog from "@/app/components/Jobs/LinkedInExportDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Calendar, DollarSign, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -210,6 +211,8 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                                             </span>
 
                                             <div className="flex gap-2">
+                                                <LinkedInExportDialog trabajo={trabajo} />
+
                                                 <TrabajoDialog
                                                     trabajo={trabajo}
                                                     mode="edit"

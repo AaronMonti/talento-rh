@@ -31,11 +31,7 @@ const formSchema = z.object({
         })
 })
 
-interface CVUploadFormProps {
-    onSuccess?: () => void
-}
-
-export default function CVUploadForm({ onSuccess }: CVUploadFormProps) {
+export default function CvUploadForm() {
     const [loading, setLoading] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -68,7 +64,7 @@ export default function CVUploadForm({ onSuccess }: CVUploadFormProps) {
                 .getPublicUrl(path)
 
             // Guardar en tabla `cvs`
-            const { error: insertError } = await supabase.from("cvs").insert([
+            const { error: insertError } = await supabase.from("candidatos").insert([
                 {
                     nombre_apellido: values.nombre_apellido,
                     localidad: values.localidad,
@@ -82,20 +78,10 @@ export default function CVUploadForm({ onSuccess }: CVUploadFormProps) {
             if (insertError) throw insertError
 
             toast.success("CV enviado correctamente")
-
-            if (onSuccess) {
-                onSuccess()
-            } else {
-                form.reset()
-            }
+            form.reset()
         } catch (err: unknown) {
-            if (err instanceof Error) {
-                console.error(err);
-                toast.error("Error al enviar el CV: " + err.message);
-            } else {
-                console.error("Error desconocido", err);
-                toast.error("Error desconocido al enviar el CV");
-            }
+            console.error(err)
+            toast.error("Error al enviar el CV")
         } finally {
             setLoading(false)
         }

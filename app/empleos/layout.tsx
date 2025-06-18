@@ -7,9 +7,9 @@ import Header from "@/app/components/NavBars/header"
 
 export default function EmpleosLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="relative top-25">{children}</main>
+      <main className="flex-1 pt-6">{children}</main>
     </div>
   );
 }
