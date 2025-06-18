@@ -499,9 +499,7 @@ const TitleSection = ({ open }: { open: boolean }) => {
       </div>
     </div>
   );
-};
-
-const ToggleClose = ({
+}; const ToggleClose = ({
   open,
   setOpen,
 }: {
@@ -542,3 +540,4 @@ const ToggleClose = ({
     </button>
   );
 };
+

@@ -4,7 +4,7 @@ import { Trabajo } from "@/types";
 import TrabajoDialog from "@/app/components/Jobs/TrabajoDialog";
 import JobPreview from "@/app/components/Jobs/JobPreview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, DollarSign, Trash2, ChevronDown, ChevronUp, Eye } from "lucide-react";
+import { MapPin, Calendar, DollarSign, Trash2, ChevronDown, ChevronUp, Eye, Users, Download, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/app/lib/supabase";
 import { toast } from "sonner";
@@ -29,14 +29,108 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
+type Postulacion = {
+    id: string;
+    cv_storage_path: string;
+    fecha_postulacion: string;
+    cv_url?: string | null;
+};
+
+async function getSignedUrl(path: string): Promise<string | null> {
+    const { data, error } = await supabase.storage
+        .from("cvs")
+        .createSignedUrl(path, 60);
+    if (error) {
+        console.error("Error obteniendo URL firmada:", error);
+        return null;
+    }
+    return data?.signedUrl || null;
+}
+
 export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos: Trabajo[] }) {
     const [trabajos, setTrabajos] = useState<Trabajo[]>(initialTrabajos);
     const [searchTerm, setSearchTerm] = useState("");
     const [sortAsc, setSortAsc] = useState(true);
     const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
     const [previewTrabajo, setPreviewTrabajo] = useState<Trabajo | null>(null);
+    const [postulaciones, setPostulaciones] = useState<Postulacion[]>([]);
+    const [loadingPostulaciones, setLoadingPostulaciones] = useState(false);
 
     const MAX_DESCRIPTION_LENGTH = 150;
+
+    // Función para obtener postulaciones por trabajo
+    const fetchPostulacionesPorTrabajo = async (trabajoId: string) => {
+        setLoadingPostulaciones(true);
+        try {
+            const { data, error } = await supabase
+                .from("postulaciones")
+                .select("id, cv_storage_path, fecha_postulacion")
+                .eq("trabajo_id", trabajoId);
+
+            if (error) {
+                toast.error("Error cargando postulaciones: " + error.message);
+                return;
+            }
+
+            const postulacionesConUrl = await Promise.all(
+                (data || []).map(async (p) => {
+                    const url = await getSignedUrl(p.cv_storage_path);
+                    return {
+                        id: p.id,
+                        cv_storage_path: p.cv_storage_path,
+                        fecha_postulacion: p.fecha_postulacion,
+                        cv_url: url,
+                    };
+                })
+            );
+
+            setPostulaciones(postulacionesConUrl);
+        } catch (error) {
+            toast.error("Error inesperado: " + error);
+        } finally {
+            setLoadingPostulaciones(false);
+        }
+    };
+
+    // Función para abrir CV
+    const handleOpenCv = async (path: string) => {
+        const url = await getSignedUrl(path);
+        if (url) {
+            window.open(url, "_blank");
+        } else {
+            toast.error("Error obteniendo URL para el CV.");
+        }
+    };
+
+    // Función para descargar CV
+    const handleDownloadCv = async (path: string, fileName: string) => {
+        try {
+            const { data, error } = await supabase.storage
+                .from("cvs")
+                .download(path);
+
+            if (error) {
+                console.error("Error descargando archivo:", error);
+                toast.error("Error al descargar el archivo.");
+                return;
+            }
+
+            if (data) {
+                const url = window.URL.createObjectURL(data);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }
+        } catch (error) {
+            console.error("Error en descarga:", error);
+            toast.error("Error al descargar el archivo.");
+        }
+    };
 
     // Función para convertir Trabajo a JobPreviewData
     const convertToJobPreviewData = (trabajo: Trabajo) => {
@@ -184,9 +278,84 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                             return (
                                 <Card key={trabajo.id} variant="neubrutalist">
                                     <CardHeader>
-                                        <CardTitle className="text-xl font-black uppercase tracking-wide text-black dark:text-white">
-                                            {trabajo.titulo_vacante}
-                                        </CardTitle>
+                                        <div className="flex items-center justify-between gap-2">
+                                            <CardTitle className="text-xl font-black uppercase tracking-wide text-black dark:text-white">
+                                                {trabajo.titulo_vacante}
+                                            </CardTitle>
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button
+                                                        variant="brutalist"
+                                                        size="sm"
+                                                        className="rounded-none flex items-center gap-1 bg-[#ff69b4] hover:bg-[#e44f9c] text-white"
+                                                        onClick={() => fetchPostulacionesPorTrabajo(trabajo.id)}
+                                                    >
+                                                        <Users className="w-3 h-3" />
+                                                        Postulantes
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Postulantes para: {trabajo.titulo_vacante}</DialogTitle>
+                                                    </DialogHeader>
+                                                    {loadingPostulaciones ? (
+                                                        <div className="p-6 text-center">
+                                                            <p className="font-bold text-lg">Cargando postulaciones...</p>
+                                                        </div>
+                                                    ) : postulaciones.length === 0 ? (
+                                                        <div className="p-6 text-center">
+                                                            <p className="font-bold text-lg text-gray-600 dark:text-gray-300">
+                                                                No hay postulaciones para este empleo.
+                                                            </p>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="space-y-4">
+                                                            {postulaciones.map((postulacion) => {
+                                                                const nombreCV = postulacion.cv_storage_path?.split("-").slice(2).join("-") || "Archivo";
+
+                                                                return (
+                                                                    <Card key={postulacion.id} variant="neubrutalist" className="!p-4">
+                                                                        <div className="flex items-center justify-between">
+                                                                            <div>
+                                                                                <h4 className="font-black text-lg text-black dark:text-white">
+                                                                                    {nombreCV}
+                                                                                </h4>
+                                                                                <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                                                    <strong>Fecha postulación:</strong>{" "}
+                                                                                    {new Date(postulacion.fecha_postulacion).toLocaleDateString('es-AR')}
+                                                                                </p>
+                                                                            </div>
+                                                                            <div className="flex gap-2">
+                                                                                {postulacion.cv_url && (
+                                                                                    <>
+                                                                                        <Button
+                                                                                            variant="brutalist"
+                                                                                            size="sm"
+                                                                                            className="bg-[#ff69b4] hover:bg-[#e44f9c] text-white"
+                                                                                            onClick={() => handleOpenCv(postulacion.cv_storage_path)}
+                                                                                        >
+                                                                                            <ExternalLink className="w-3 h-3 mr-1" /> Ver CV
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                            variant="brutalist"
+                                                                                            size="sm"
+                                                                                            className="bg-[#dd63ff] hover:bg-[#bd13ec] text-white"
+                                                                                            onClick={() => handleDownloadCv(postulacion.cv_storage_path, nombreCV)}
+                                                                                        >
+                                                                                            <Download className="w-3 h-3 mr-1" /> Descargar
+                                                                                        </Button>
+                                                                                    </>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    </Card>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    )}
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
                                     </CardHeader>
                                     <CardContent className="space-y-3">
                                         <div className="flex items-center gap-2 font-bold">
