@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     "vacantes industriales",
     "selección estratégica"
   ],
-  authors: [{ name: "María Florencia Luna", url: "https://talentopositivorh.com" }],
+  authors: [{ name: "María Florencia Luna", url: "https://talentopositivorh.com.ar" }],
   creator: "Talento Positivo RH",
   publisher: "Talento Positivo RH",
   robots: {
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_AR",
-    url: "https://talentopositivorh.com",
+    url: "https://talentopositivorh.com.ar",
     siteName: "Talento Positivo RH",
     title: "Talento Positivo RH - Consultora en Recursos Humanos y Selección de Personal",
     description: "Consultora especializada en atracción y selección de profesionales con foco en perfiles industriales. Conectamos talento calificado con empresas.",
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     images: ["/logo_talento-Photoroom.png"],
   },
   alternates: {
-    canonical: "https://talentopositivorh.com",
+    canonical: "https://talentopositivorh.com.ar",
   },
   category: "business",
   classification: "Recursos Humanos",
@@ -113,8 +113,8 @@ export default function RootLayout({
               "@type": "Organization",
               "name": "Talento Positivo RH",
               "description": "Consultora especializada en atracción y selección de profesionales con foco en perfiles industriales",
-              "url": "https://talentopositivorh.com",
-              "logo": "https://talentopositivorh.com/logo_talento-Photoroom.png",
+              "url": "https://talentopositivorh.com.ar",
+              "logo": "https://talentopositivorh.com.ar/logo_talento-Photoroom.png",
               "contactPoint": {
                 "@type": "ContactPoint",
                 "telephone": "+54-11-6589-9729",

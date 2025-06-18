@@ -8,13 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import {
     Building,
     MapPin,
-    Euro,
+    CircleDollarSign,
     GraduationCap,
     Clock,
     ArrowLeft,
 } from "lucide-react";
 import PostulacionForm from "@/app/components/PostulationForm";
 import { Button } from "@/components/ui/button";
+import ShareButton from "@/app/components/ShareButton";
 import { Metadata } from "next";
 
 // Función para generar metadata dinámica
@@ -60,7 +61,7 @@ export async function generateMetadata({
             title: `${trabajo.titulo_vacante} en ${trabajo.empresa}`,
             description: descripcionCorta,
             type: "website",
-            url: `https://talentopositivorh.com/empleos/${id}`,
+            url: `https://talentopositivorh.com.ar/empleos/${id}`,
             siteName: "Talento Positivo RH",
         },
         twitter: {
@@ -69,7 +70,7 @@ export async function generateMetadata({
             description: descripcionCorta,
         },
         alternates: {
-            canonical: `https://talentopositivorh.com/empleos/${id}`,
+            canonical: `https://talentopositivorh.com.ar/empleos/${id}`,
         },
         other: {
             "job:company": trabajo.empresa,
@@ -157,7 +158,7 @@ export default async function TrabajoDetallePage({
                 }}
             />
 
-            <div className="max-w-3xl mx-auto p-6 space-y-6 pb-20">
+            <div className="max-w-3xl mx-auto p-6 space-y-6 pb-20 min-h-[calc(100vh-5rem)] md:min-h-[calc(100vh-6rem)]">
                 <Button asChild variant="link">
                     <Link
                         href="/empleos"
@@ -167,7 +168,7 @@ export default async function TrabajoDetallePage({
                     </Link>
                 </Button>
 
-                <Card className="bg-fuchsia-50">
+                <Card className="bg-fuchsia-50 min-h-[80vh]">
                     <CardContent className="p-6 space-y-6">
                         <header className="flex justify-between items-start">
                             <div>
@@ -175,39 +176,46 @@ export default async function TrabajoDetallePage({
                                     {trabajo.titulo_vacante}
                                 </h1>
                                 <div className="flex items-center text-gray-600 mt-1">
-                                    <Building size={16} className="mr-1" />
+                                    <Building size={20} className="mr-2" />
                                     {trabajo.empresa}
                                 </div>
                                 <div className="text-gray-500 mt-1">
                                     Publicado el {formatoFecha}
                                 </div>
                             </div>
-                            <Badge variant="outline">{trabajo.modalidad}</Badge>
+                            <div className="flex flex-col gap-2 items-end">
+                                <Badge variant="outline">{trabajo.modalidad}</Badge>
+                                <ShareButton
+                                    url={`https://talentopositivorh.com.ar/empleos/${trabajo.id}`}
+                                    title={`${trabajo.titulo_vacante} en ${trabajo.empresa}`}
+                                    text={`Revisa esta oferta de empleo: ${trabajo.titulo_vacante} en ${trabajo.empresa}. ${trabajo.ubicacion ? `Ubicación: ${trabajo.ubicacion}.` : ''}`}
+                                />
+                            </div>
                         </header>
 
                         <section className="space-y-2 text-gray-700">
                             <h2 className="font-semibold text-gray-800">Información general</h2>
                             {trabajo.ubicacion && (
                                 <div className="flex items-center">
-                                    <MapPin size={16} className="mr-2" />
+                                    <MapPin size={20} className="mr-3" />
                                     <span>{trabajo.ubicacion}</span>
                                 </div>
                             )}
                             {trabajo.rango_salarial && (
                                 <div className="flex items-center">
-                                    <Euro size={16} className="mr-2" />
+                                    <CircleDollarSign size={20} className="mr-3" />
                                     <span>{trabajo.rango_salarial}</span>
                                 </div>
                             )}
                             {trabajo.formacion && (
                                 <div className="flex items-center">
-                                    <GraduationCap size={16} className="mr-2" />
+                                    <GraduationCap size={20} className="mr-3" />
                                     <span>{trabajo.formacion}</span>
                                 </div>
                             )}
                             {trabajo.jornada_laboral && (
                                 <div className="flex items-center">
-                                    <Clock size={16} className="mr-2" />
+                                    <Clock size={20} className="mr-3" />
                                     <span>{trabajo.jornada_laboral}</span>
                                 </div>
                             )}

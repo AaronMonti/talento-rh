@@ -2,8 +2,9 @@
 
 import { Trabajo } from "@/types";
 import TrabajoDialog from "@/app/components/Jobs/TrabajoDialog";
+import JobPreview from "@/app/components/Jobs/JobPreview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, DollarSign, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, Calendar, DollarSign, Trash2, ChevronDown, ChevronUp, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/app/lib/supabase";
 import { toast } from "sonner";
@@ -19,6 +20,13 @@ import {
     AlertDialogCancel,
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
 export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos: Trabajo[] }) {
@@ -26,8 +34,30 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
     const [searchTerm, setSearchTerm] = useState("");
     const [sortAsc, setSortAsc] = useState(true);
     const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
+    const [previewTrabajo, setPreviewTrabajo] = useState<Trabajo | null>(null);
 
     const MAX_DESCRIPTION_LENGTH = 150;
+
+    // Función para convertir Trabajo a JobPreviewData
+    const convertToJobPreviewData = (trabajo: Trabajo) => {
+        return {
+            titulo_vacante: trabajo.titulo_vacante,
+            empresa: trabajo.empresa,
+            rubro: trabajo.rubro || "",
+            formacion: trabajo.formacion || "",
+            conocimientos_tecnicos: trabajo.conocimientos_tecnicos || "",
+            jornada_laboral: trabajo.jornada_laboral || "",
+            ubicacion: trabajo.ubicacion || "",
+            modalidad: trabajo.modalidad as "Presencial" | "Remoto" | "Híbrido",
+            rango_salarial: {
+                desde: trabajo.rango_salarial || "",
+                hasta: "",
+                moneda: "ARS" as const
+            },
+            descripcion: trabajo.descripcion || "",
+            activo: trabajo.activo,
+        };
+    };
 
     const toggleDescription = (trabajoId: string) => {
         setExpandedDescriptions(prev => {
@@ -179,7 +209,7 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                                         )}
 
                                         <div className="bg-gray-100 p-3 border-2 border-black dark:bg-gray-800 dark:border-white">
-                                            <p className="text-sm font-bold text-gray-700 dark:text-gray-300 break-words whitespace-normal">
+                                            <p className="text-sm text-gray-700 dark:text-gray-300 break-words whitespace-pre-line leading-relaxed">
                                                 {displayDescription}
                                             </p>
 
@@ -210,6 +240,26 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                                             </span>
 
                                             <div className="flex gap-2">
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button
+                                                            variant="brutalist"
+                                                            size="sm"
+                                                            className="rounded-none flex items-center gap-1 bg-[#50fa7b] hover:bg-[#8be9fd] text-black"
+                                                            onClick={() => setPreviewTrabajo(trabajo)}
+                                                        >
+                                                            <Eye className="w-3 h-3" />
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                                                        <DialogHeader>
+                                                            <DialogTitle>Vista Previa - {trabajo.titulo_vacante}</DialogTitle>
+                                                        </DialogHeader>
+                                                        {previewTrabajo && (
+                                                            <JobPreview data={convertToJobPreviewData(previewTrabajo)} />
+                                                        )}
+                                                    </DialogContent>
+                                                </Dialog>
 
                                                 <TrabajoDialog
                                                     trabajo={trabajo}

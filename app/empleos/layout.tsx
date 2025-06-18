@@ -9,7 +9,7 @@ export default function EmpleosLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 pt-6">{children}</main>
+      <main className="flex-1 pt-20 md:pt-24">{children}</main>
     </div>
   );
 }

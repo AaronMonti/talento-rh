@@ -64,7 +64,7 @@ export function TrabajoForm({
             activo: true,
         },
     });
-    
+
     async function handleSubmit(data: FormValues) {
         await onSubmit({ ...data, rango_salarial: { ...data.rango_salarial } });
     }
@@ -102,6 +102,9 @@ export function TrabajoForm({
                                                     value={typeof fieldProps.value === "string" ? fieldProps.value : ""}
                                                     onChange={(e) => fieldProps.onChange(e.target.value)}
                                                     disabled={disabled}
+                                                    rows={field === "descripcion" ? 8 : 4}
+                                                    className="resize-y min-h-[120px]"
+                                                    placeholder={field === "descripcion" ? "Describe detalladamente las responsabilidades, requisitos y beneficios del puesto..." : "Especifica los conocimientos técnicos requeridos..."}
                                                 />
                                             </FormControl>
                                         </FormItem>

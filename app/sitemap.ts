@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { getTrabajosActivos } from './actions/getTrabajos'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://talentopositivorh.com'
+    const baseUrl = 'https://talentopositivorh.com.ar'
 
     // Obtener trabajos activos para incluirlos en el sitemap
     const trabajos = await getTrabajosActivos() || []

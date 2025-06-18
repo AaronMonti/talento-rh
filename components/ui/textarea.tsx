@@ -21,7 +21,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
           // Brutalist variant
           variant === "brutalist" && [
-            "border-[3px] border-black dark:border-white bg-white dark:bg-gray-800 rounded-none focus:ring-0 focus:border-black dark:focus:border-white focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:focus:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] font-bold placeholder:text-gray-500 dark:placeholder:text-gray-400 text-black dark:text-white resize-none transition-colors duration-300"
+            "border-[3px] border-black dark:border-white bg-white dark:bg-gray-800 rounded-none focus:ring-0 focus:border-black dark:focus:border-white focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:focus:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.8)] font-bold placeholder:text-gray-500 dark:placeholder:text-gray-400 text-black dark:text-white transition-colors duration-300"
           ],
 
           className

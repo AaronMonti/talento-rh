@@ -28,6 +28,8 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/app/lib/supabase";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import JobPreview from "./JobPreview";
+import { Eye } from "lucide-react";
 
 const formSchema = z.object({
     titulo_vacante: z.string(),
@@ -53,12 +55,13 @@ type TrabajoDialogProps = {
     mode: 'create' | 'edit';
     trabajo?: Trabajo;
     onCreate?: (nuevoTrabajo: Trabajo) => void;
-    onUpdate?: (trabajoActualizado: Trabajo) => void; // Nueva prop para actualizar
+    onUpdate?: (trabajoActualizado: Trabajo) => void;
 };
 
 export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: TrabajoDialogProps) {
     const [open, setOpen] = useState(false);
     const [editMode, setEditMode] = useState(mode === "create");
+    const [showPreview, setShowPreview] = useState(false);
 
     // Para modo edición, parseamos rango_salarial
     const defaultRango: { desde?: string; hasta?: string; moneda?: "ARS" | "USD" } =
@@ -97,6 +100,9 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
             activo: trabajo?.activo ?? true,
         },
     });
+
+    // Usar watch para reactividad en tiempo real
+    const watchedValues = form.watch();
 
     async function onSubmit(data: FormValues) {
         const { desde, hasta, moneda } = data.rango_salarial;
@@ -169,7 +175,6 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
                 setOpen(false);
                 return;
             }
-
 
             toast.success("Trabajo actualizado correctamente");
 
@@ -400,39 +405,61 @@ export default function TrabajoDialog({ mode, trabajo, onCreate, onUpdate }: Tra
                         </div>
 
                         <DialogFooter variant="brutalist">
-                            {mode === "edit" ? (
-                                !editMode ? (
-                                    <Button
-                                        type="button"
-                                        variant="brutalist"
-                                        onClick={() => setEditMode(true)}
-                                        className="text-lg px-6 py-3 bg-[#ff69b4] hover:bg-[#e44f9c] text-white"
-                                    >
-                                        Editar
-                                    </Button>
-                                ) : (
-                                    <div className="flex gap-4">
-                                        <Button
-                                            type="button"
-                                            variant="brutalist"
-                                            onClick={() => setEditMode(false)}
-                                            className="text-lg px-6 py-3 bg-[#ff97d9] hover:bg-[#ff69b4] text-black"
-                                        >
-                                            Cancelar
-                                        </Button>
-                                        <Button variant="brutalist" type="submit" className="text-lg px-6 py-3 bg-[#bd13ec] hover:bg-[#e44f9c] text-white">
-                                            Guardar
-                                        </Button>
-                                    </div>
-                                )
-                            ) : (
-                                <Button variant="brutalist" type="submit" className="text-lg px-6 py-3 bg-[#bd13ec] hover:bg-[#e44f9c] text-white">
-                                    Crear
+                            <div className="flex justify-between w-full">
+                                <Button
+                                    type="button"
+                                    variant="brutalist"
+                                    onClick={() => setShowPreview(!showPreview)}
+                                    className="text-lg px-6 py-3 bg-[#8be9fd] hover:bg-[#50fa7b] text-black flex items-center gap-2"
+                                >
+                                    <Eye size={18} />
+                                    {showPreview ? "Ocultar" : "Vista"} Previa
                                 </Button>
-                            )}
+
+                                <div className="flex gap-4">
+                                    {mode === "edit" ? (
+                                        !editMode ? (
+                                            <Button
+                                                type="button"
+                                                variant="brutalist"
+                                                onClick={() => setEditMode(true)}
+                                                className="text-lg px-6 py-3 bg-[#ff69b4] hover:bg-[#e44f9c] text-white"
+                                            >
+                                                Editar
+                                            </Button>
+                                        ) : (
+                                            <>
+                                                <Button
+                                                    type="button"
+                                                    variant="brutalist"
+                                                    onClick={() => setEditMode(false)}
+                                                    className="text-lg px-6 py-3 bg-[#ff97d9] hover:bg-[#ff69b4] text-black"
+                                                >
+                                                    Cancelar
+                                                </Button>
+                                                <Button variant="brutalist" type="submit" className="text-lg px-6 py-3 bg-[#bd13ec] hover:bg-[#e44f9c] text-white">
+                                                    Guardar
+                                                </Button>
+                                            </>
+                                        )
+                                    ) : (
+                                        <Button variant="brutalist" type="submit" className="text-lg px-6 py-3 bg-[#bd13ec] hover:bg-[#e44f9c] text-white">
+                                            Crear
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
                         </DialogFooter>
                     </form>
                 </Form>
+
+                {/* Vista Previa que se actualiza automáticamente */}
+                {showPreview && (
+                    <div className="mt-6 border-t pt-6">
+                        <h3 className="text-lg font-bold mb-4 text-primary">Vista Previa del Empleo - Actualización Automática</h3>
+                        <JobPreview data={watchedValues} />
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );

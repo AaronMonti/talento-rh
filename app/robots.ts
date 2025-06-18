@@ -24,7 +24,7 @@ export default function robots(): MetadataRoute.Robots {
                 ],
             },
         ],
-        sitemap: 'https://talentopositivorh.com/sitemap.xml',
-        host: 'https://talentopositivorh.com',
+        sitemap: 'https://talentopositivorh.com.ar/sitemap.xml',
+        host: 'https://talentopositivorh.com.ar',
     }
 } 

@@ -26,10 +26,10 @@ export const metadata: Metadata = {
         title: "Ofertas de Empleo Industriales - Trabajos Disponibles | Talento Positivo RH",
         description: "Descubre las mejores oportunidades laborales en perfiles industriales. Ofertas actualizadas diariamente.",
         type: "website",
-        url: "https://talentopositivorh.com/empleos",
+        url: "https://talentopositivorh.com.ar/empleos",
     },
     alternates: {
-        canonical: "https://talentopositivorh.com/empleos",
+        canonical: "https://talentopositivorh.com.ar/empleos",
     },
 };
 
@@ -80,19 +80,19 @@ export default async function TrabajosPage() {
                                             {trabajo.titulo_vacante}
                                         </h2>
                                         <div className="flex items-center text-sm text-gray-600 mb-2">
-                                            <Building size={16} className="mr-1" />
+                                            <Building size={20} className="mr-2" />
                                             {trabajo.empresa}
                                         </div>
                                         <div className="space-y-1 mb-4 text-sm text-gray-500">
                                             {trabajo.ubicacion && (
                                                 <div className="flex items-center">
-                                                    <MapPin size={16} className="mr-1" />
+                                                    <MapPin size={20} className="mr-2" />
                                                     {trabajo.ubicacion}
                                                 </div>
                                             )}
                                             {trabajo.rango_salarial && (
                                                 <div className="flex items-center">
-                                                    <CircleDollarSign size={16} className="mr-1" />
+                                                    <CircleDollarSign size={20} className="mr-2" />
                                                     {trabajo.rango_salarial}
                                                 </div>
                                             )}
