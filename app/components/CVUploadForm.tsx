@@ -58,13 +58,13 @@ export default function CVUploadForm({ onSuccess }: CVUploadFormProps) {
 
             // Subir a Supabase Storage
             const { error: uploadError } = await supabase.storage
-                .from("cv-uploads")
+                .from("cvs")
                 .upload(path, file)
 
             if (uploadError) throw uploadError
 
             const { data: publicUrlData } = supabase.storage
-                .from("cv-uploads")
+                .from("cvs")
                 .getPublicUrl(path)
 
             // Guardar en tabla `cvs`
