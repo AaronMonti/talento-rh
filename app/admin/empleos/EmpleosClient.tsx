@@ -134,6 +134,55 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
 
     // Función para convertir Trabajo a JobPreviewData
     const convertToJobPreviewData = (trabajo: Trabajo) => {
+        // Parsear rango_salarial string a objeto
+        const parseRangoSalarial = (rangoStr: string | null) => {
+            if (!rangoStr) {
+                return { desde: "", hasta: "", moneda: "ARS" as const };
+            }
+
+            // Buscar patrón como "$800,000 - $1,000,000 ARS" o "$800.000 - $1.000.000 ARS"
+            const match = rangoStr.match(
+                /\$?([\d\.\,]+)\s*-\s*\$?([\d\.\,]+)\s*(ARS|USD)/i
+            );
+
+            if (match) {
+                const desde = match[1].replace(/\./g, "").replace(/,/g, "");
+                const hasta = match[2].replace(/\./g, "").replace(/,/g, "");
+                const moneda = match[3].toUpperCase();
+                const isMonedaValida = moneda === "ARS" || moneda === "USD";
+
+                return {
+                    desde,
+                    hasta,
+                    moneda: isMonedaValida ? (moneda as "ARS" | "USD") : "ARS",
+                };
+            }
+
+            // Buscar patrón como "$800,000 ARS" (solo desde)
+            const singleMatch = rangoStr.match(
+                /\$?([\d\.\,]+)\s*(ARS|USD)/i
+            );
+
+            if (singleMatch) {
+                const desde = singleMatch[1].replace(/\./g, "").replace(/,/g, "");
+                const moneda = singleMatch[2].toUpperCase();
+                const isMonedaValida = moneda === "ARS" || moneda === "USD";
+
+                return {
+                    desde,
+                    hasta: "",
+                    moneda: isMonedaValida ? (moneda as "ARS" | "USD") : "ARS",
+                };
+            }
+
+            // Si no coincide con ningún patrón, devolver el string original en desde
+            return {
+                desde: rangoStr,
+                hasta: "",
+                moneda: "ARS" as const,
+            };
+        };
+
         return {
             titulo_vacante: trabajo.titulo_vacante,
             empresa: trabajo.empresa,
@@ -143,11 +192,7 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
             jornada_laboral: trabajo.jornada_laboral || "",
             ubicacion: trabajo.ubicacion || "",
             modalidad: trabajo.modalidad as "Presencial" | "Remoto" | "Híbrido",
-            rango_salarial: {
-                desde: trabajo.rango_salarial || "",
-                hasta: "",
-                moneda: "ARS" as const
-            },
+            rango_salarial: parseRangoSalarial(trabajo.rango_salarial),
             descripcion: trabajo.descripcion || "",
             activo: trabajo.activo,
         };
