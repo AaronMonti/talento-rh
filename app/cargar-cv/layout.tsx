@@ -18,7 +18,7 @@ export const metadata: Metadata = {
         "oportunidades laborales"
     ],
     openGraph: {
-        title: "Enviar CV - Únete a Nuestro Banco de Talentos | Talento Positivo RH",
+        title: "Enviar CV - Únete a Nuestro Banco de Talentos | TALENTO POSITIVO RH",
         description: "Sube tu currículum vitae y forma parte de nuestro banco de talentos especializado en perfiles industriales.",
         type: "website",
         url: "https://talentopositivorh.com.ar/cargar-cv",

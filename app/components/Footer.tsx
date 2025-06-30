@@ -7,7 +7,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Información de la empresa */}
                     <div className="md:col-span-1">
-                        <h3 className="text-xl font-bold mb-4 text-purple-600 dark:text-purple-400">Talento Positivo RH</h3>
+                        <h3 className="text-xl font-bold mb-4 text-primary">TALENTO POSITIVO RH</h3>
                         <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm leading-relaxed">
                             Consultora especializada en atracción y selección de profesionales con foco en perfiles industriales.
                             Conectamos talento calificado con empresas PYMES, nacionales y multinacionales.
@@ -76,7 +76,7 @@ export default function Footer() {
                 <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
                         <p className="text-gray-500 dark:text-gray-400 text-xs">
-                            © {new Date().getFullYear()} Talento Positivo RH. Todos los derechos reservados.
+                            © {new Date().getFullYear()} <span className="text-primary font-semibold">TALENTO POSITIVO RH</span>. Todos los derechos reservados.
                         </p>
                         <div className="flex flex-col md:flex-row items-center space-y-1 md:space-y-0 md:space-x-4 text-xs">
                             <p className="text-gray-500 dark:text-gray-400">

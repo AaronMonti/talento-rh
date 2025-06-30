@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         "recursos humanos"
     ],
     openGraph: {
-        title: "Ofertas de Empleo Industriales - Trabajos Disponibles | Talento Positivo RH",
+        title: "Ofertas de Empleo Industriales - Trabajos Disponibles | TALENTO POSITIVO RH",
         description: "Descubre las mejores oportunidades laborales en perfiles industriales. Ofertas actualizadas diariamente.",
         type: "website",
         url: "https://talentopositivorh.com.ar/empleos",

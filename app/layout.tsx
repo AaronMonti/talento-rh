@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Talento Positivo RH - Consultora en Recursos Humanos y Selección de Personal",
-    template: "%s | Talento Positivo RH"
+    default: "TALENTO POSITIVO RH - Consultoría en Atracción & Selección de Capital Humano",
+    template: "%s | TALENTO POSITIVO RH"
   },
   description: "Consultora especializada en atracción y selección de profesionales con foco en perfiles industriales. Conectamos talento calificado con empresas PYMES, nacionales y multinacionales. +15 años de experiencia en Capital Humano.",
   keywords: [
@@ -39,8 +39,8 @@ export const metadata: Metadata = {
     "selección estratégica"
   ],
   authors: [{ name: "María Florencia Luna", url: "https://talentopositivorh.com.ar" }],
-  creator: "Talento Positivo RH",
-  publisher: "Talento Positivo RH",
+  creator: "TALENTO POSITIVO RH",
+  publisher: "TALENTO POSITIVO RH",
   robots: {
     index: true,
     follow: true,
@@ -56,21 +56,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_AR",
     url: "https://talentopositivorh.com.ar",
-    siteName: "Talento Positivo RH",
-    title: "Talento Positivo RH - Consultora en Recursos Humanos y Selección de Personal",
+    siteName: "TALENTO POSITIVO RH",
+    title: "TALENTO POSITIVO RH - Consultoría en Atracción & Selección de Capital Humano",
     description: "Consultora especializada en atracción y selección de profesionales con foco en perfiles industriales. Conectamos talento calificado con empresas.",
     images: [
       {
         url: "/logo_talento-Photoroom.png",
         width: 1200,
         height: 630,
-        alt: "Talento Positivo RH - Consultora en Recursos Humanos",
+        alt: "TALENTO POSITIVO RH - Consultora en Recursos Humanos",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Talento Positivo RH - Consultora en Recursos Humanos",
+    title: "TALENTO POSITIVO RH - Consultora en Recursos Humanos",
     description: "Consultora especializada en selección de perfiles industriales. +15 años conectando talento con empresas.",
     images: ["/logo_talento-Photoroom.png"],
   },
@@ -111,7 +111,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              "name": "Talento Positivo RH",
+              "name": "TALENTO POSITIVO RH",
               "description": "Consultora especializada en atracción y selección de profesionales con foco en perfiles industriales",
               "url": "https://talentopositivorh.com.ar",
               "logo": "https://talentopositivorh.com.ar/logo_talento-Photoroom.png",
@@ -163,7 +163,7 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#bd13ec" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Talento Positivo RH" />
+        <meta name="apple-mobile-web-app-title" content="TALENTO POSITIVO RH" />
         <meta name="format-detection" content="telephone=yes" />
       </head>
       <body

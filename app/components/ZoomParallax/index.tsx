@@ -52,8 +52,13 @@ export default function Index() {
                     className="object-cover"
                     priority
                 />
-                <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40">
-                    <h2 className="text-white text-3xl font-bold">Talento+RH</h2>
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                    <h2 className="text-secondary text-5xl font-black tracking-wider uppercase"
+                        style={{
+                            textShadow: '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6)'
+                        }}>
+                        Talento+RH
+                    </h2>
                 </div>
             </div>
 

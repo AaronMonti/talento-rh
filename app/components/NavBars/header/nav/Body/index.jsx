@@ -55,7 +55,7 @@ export default function Body({ links, selectedLink, setSelectedLink, onClose }) 
                                 onMouseLeave={() => { setSelectedLink({ isActive: false, index }) }}
                                 variants={blur}
                                 animate={selectedLink.isActive && selectedLink.index != index ? "open" : "closed"}
-                                className={isJobs ? 'text-[#ff69b4]' : ''}
+                                className={isJobs ? 'text-secondary' : ''}
                             >
                                 {getChars(title)}
                             </motion.p>

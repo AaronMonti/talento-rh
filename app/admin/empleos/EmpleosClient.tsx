@@ -4,7 +4,7 @@ import { Trabajo } from "@/types";
 import TrabajoDialog from "@/app/components/Jobs/TrabajoDialog";
 import JobPreview from "@/app/components/Jobs/JobPreview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, DollarSign, Trash2, ChevronDown, ChevronUp, Eye, Users, Download, ExternalLink } from "lucide-react";
+import { MapPin, Calendar, DollarSign, Trash2, ChevronDown, ChevronUp, Eye, Users, Download, ExternalLink, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/app/lib/supabase";
 import { toast } from "sonner";
@@ -129,6 +129,18 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
         } catch (error) {
             console.error("Error en descarga:", error);
             toast.error("Error al descargar el archivo.");
+        }
+    };
+
+    // Función para copiar URL del trabajo
+    const handleCopyUrl = async (trabajoId: string) => {
+        try {
+            const url = `${window.location.origin}/empleos/${trabajoId}`;
+            await navigator.clipboard.writeText(url);
+            toast.success("URL copiada al portapapeles");
+        } catch (error) {
+            console.error("Error copiando URL:", error);
+            toast.error("Error al copiar la URL");
         }
     };
 
@@ -474,6 +486,15 @@ export default function EmpleosClient({ trabajos: initialTrabajos }: { trabajos:
                                                         )}
                                                     </DialogContent>
                                                 </Dialog>
+
+                                                <Button
+                                                    variant="brutalist"
+                                                    size="sm"
+                                                    className="rounded-none flex items-center gap-1 bg-[#8be9fd] hover:bg-[#50fa7b] text-black"
+                                                    onClick={() => handleCopyUrl(trabajo.id)}
+                                                >
+                                                    <Copy className="w-3 h-3" />
+                                                </Button>
 
                                                 <TrabajoDialog
                                                     trabajo={trabajo}

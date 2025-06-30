@@ -34,7 +34,7 @@ export async function generateMetadata({
 
     if (!trabajo) {
         return {
-            title: "Empleo no encontrado | Talento Positivo RH",
+            title: "Empleo no encontrado | TALENTO POSITIVO RH",
             description: "La oferta de empleo que buscas no está disponible.",
         };
     }
@@ -45,7 +45,7 @@ export async function generateMetadata({
 
     return {
         title: `${trabajo.titulo_vacante} en ${trabajo.empresa} - ${trabajo.ubicacion || "Argentina"}`,
-        description: `${descripcionCorta} Modalidad: ${trabajo.modalidad}. ${trabajo.rango_salarial ? `Salario: ${trabajo.rango_salarial}.` : ""} Aplica ahora en Talento Positivo RH.`,
+        description: `${descripcionCorta} Modalidad: ${trabajo.modalidad}. ${trabajo.rango_salarial ? `Salario: ${trabajo.rango_salarial}.` : ""} Aplica ahora en TALENTO POSITIVO RH.`,
         keywords: [
             trabajo.titulo_vacante,
             trabajo.empresa,
@@ -62,7 +62,7 @@ export async function generateMetadata({
             description: descripcionCorta,
             type: "website",
             url: `https://talentopositivorh.com.ar/empleos/${id}`,
-            siteName: "Talento Positivo RH",
+            siteName: "TALENTO POSITIVO RH",
         },
         twitter: {
             card: "summary",
@@ -119,7 +119,7 @@ export default async function TrabajoDetallePage({
                         "description": trabajo.descripcion,
                         "identifier": {
                             "@type": "PropertyValue",
-                            "name": "Talento Positivo RH",
+                            "name": "TALENTO POSITIVO RH",
                             "value": trabajo.id
                         },
                         "datePosted": trabajo.fecha_publicacion,

@@ -21,7 +21,7 @@ export default function About() {
                         <h2 className="text-4xl font-bold text-gray-800 mb-6">Sobre Nosotros</h2>
                         <div className="w-24 h-1 bg-primary mx-auto mb-8"></div>
                         <p className="text-xl text-gray-600 leading-relaxed text-center">
-                            En <span className="font-bold">Talento Positivo RH</span> somos una consultora especializada en atracción y selección de profesionales, con foco en <span className="font-semibold">perfiles industriales</span>.
+                            En <span className="font-bold text-primary">TALENTO POSITIVO RH</span> somos una consultora especializada en atracción y selección de profesionales, con foco en <span className="font-semibold">perfiles industriales</span>.
                             Nos especializamos en identificar colaboradores que impulsen el crecimiento de las organizaciones, alineando talento con cultura y objetivos empresariales.
                         </p>
                     </motion.div>
@@ -48,7 +48,7 @@ export default function About() {
                             María Florencia Luna
                         </h2>
                         <p className="text-gray-600 leading-relaxed">
-                            Licenciada en Gestión de Capital Humano (Universidad de Belgrano), con más de 15 años de experiencia en empresas PYMES, nacionales y multinacionales. Fundadora de Talento Positivo RH, impulsa el crecimiento organizacional a través de la selección estratégica de talento humano.
+                            Licenciada en Gestión de Capital Humano (Universidad de Belgrano), con más de 15 años de experiencia en empresas PYMES, nacionales y multinacionales. Fundadora de <span className="text-primary font-semibold">TALENTO POSITIVO RH</span>, impulsa el crecimiento organizacional a través de la selección estratégica de talento humano.
                         </p>
                     </div>
                 </div>

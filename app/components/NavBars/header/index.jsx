@@ -20,8 +20,8 @@ export default function index() {
                 <div onClick={() => { setIsActive(!isActive) }} className={styles.el}>
                     <div className={`${styles.burger} ${isActive ? styles.burgerActive : ""}`}></div>
                     <div className={styles.label}>
-                        <motion.p variants={opacity} animate={!isActive ? "open" : "closed"}>Menu</motion.p>
-                        <motion.p variants={opacity} animate={isActive ? "open" : "closed"}>Cerrar</motion.p>
+                        <motion.p className='font-bold text-lg' variants={opacity} animate={!isActive ? "open" : "closed"}>Menu</motion.p>
+                        <motion.p className='font-bold text-lg' variants={opacity} animate={isActive ? "open" : "closed"}>Cerrar</motion.p>
                     </div>
                 </div>
             </div>
