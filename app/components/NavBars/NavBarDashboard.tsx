@@ -491,7 +491,7 @@ const TitleSection = ({ open }: { open: boolean }) => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <span className="block text-xl font-black tracking-tight text-primary dark:text-purple-400">TalentoRH</span>
+              <span className="block text-xl font-black tracking-tight text-primary dark:text-purple-400">TALENTO+RH</span>
               <span className="block text-xs text-gray-700 dark:text-gray-300 mt-1">Panel de Administración</span>
             </motion.div>
           )}
