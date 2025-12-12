@@ -62,6 +62,13 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+
+  // Configuración para builds sin conexión - permitir que las fuentes fallen silenciosamente
+  // Esto ayuda cuando el build de Docker no tiene acceso a Google Fonts
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
 };
 
 export default nextConfig;

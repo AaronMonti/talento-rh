@@ -5,14 +5,22 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/app/components/theme-provider";
 import { ConditionalFooter } from "@/app/components/ConditionalFooter";
 
+// Configurar Geist con fallbacks robustos
+// Durante el build, Next.js intentará descargar las fuentes pero usará los fallbacks si falla
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Arial", "sans-serif"],
+  adjustFontFallback: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
