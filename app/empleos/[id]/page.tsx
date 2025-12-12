@@ -26,11 +26,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
     const { id } = await params;
 
-    const { data: trabajo } = await supabase
-        .from("trabajos")
-        .select("*")
-        .eq("id", id)
-        .single();
+    let trabajo = null;
+    try {
+        const { data } = await supabase
+            .from("trabajos")
+            .select("*")
+            .eq("id", id)
+            .single();
+        trabajo = data;
+    } catch (error) {
+        // Durante el build, si hay un error, retornar metadata por defecto
+        console.warn(`Error al obtener trabajo ${id} para metadata:`, error);
+    }
 
     if (!trabajo) {
         return {

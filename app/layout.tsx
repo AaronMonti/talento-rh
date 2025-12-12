@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://talentopositivorh.com.ar"),
   title: {
     default: "TALENTO POSITIVO RH - Consultoría en Atracción & Selección de Capital Humano",
     template: "%s | TALENTO POSITIVO RH"

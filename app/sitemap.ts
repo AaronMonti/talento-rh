@@ -5,7 +5,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://talentopositivorh.com.ar'
 
     // Obtener trabajos activos para incluirlos en el sitemap
-    const trabajos = await getTrabajosActivos() || []
+    // Manejar errores durante el build si Supabase no está disponible
+    let trabajos: Awaited<ReturnType<typeof getTrabajosActivos>> = []
+    try {
+        trabajos = await getTrabajosActivos() || []
+    } catch (error) {
+        // Durante el build, si hay un error (ej: Supabase no disponible), continuar sin trabajos
+        console.warn('No se pudieron obtener trabajos para el sitemap durante el build:', error)
+    }
 
     // URLs estáticas
     const staticUrls = [
