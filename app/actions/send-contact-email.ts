@@ -3,7 +3,8 @@
 import { Resend } from 'resend'
 import { generateContactEmailTemplate, type ContactEmailData } from '../lib/email-templates'
 
-const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY)
+// Usar valor por defecto durante el build si la variable de entorno no está disponible
+const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY || 'placeholder-key')
 
 export async function sendContactEmail({
   name,
